@@ -1,0 +1,422 @@
+Segment	start	end	size	ROM	atr
+
+main	$0	$47F	$480	$0	IVECT(RW)
+TEXT	$480	$15BBF	$15740	$480	CODE(R)
+DATA_CONST	$15BC0	$16B55	$F96	$15BC0	IDATA(R)
+DATA	$20000	$20111	$112	$16B56	IDATA(RW)
+BSS	$20112	$3849D	$1838C	$16C68	DATA(RW)
+USTACK	$39000	$3943F	$440	$2EFF4	DATA(RW)
+STACK	$39440	$3B47F	$2040	$2F434	DATA(RW)
+Symbol	Address(hex)	(ObjctFile,SegmentName)	Size
+
+___mm_num_of_int_vect	$120	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_int_vect_addr	$0	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_int_vect_rambase	$0	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_dtc_vect_type	$4	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_num_of_dtc_vect	$100	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_dtc_vect_addr	$0	($$LINKERDEF$$,$$LINKERSEG$$)	-
+___mm_dtc_reg_addr	$0	($$LINKERDEF$$,$$LINKERSEG$$)	-
+__exit2	$69E	(C1.ASM,TEXT)	5
+_USTACK_TOP	$3943C	(C1.ASM,USTACK)	-
+__smr_adr	$15BD8	(C1.ASM,DATA_CONST)	-
+_STACK_BTM	$39480	(C1.ASM,STACK)	-
+___mm_sio_di0	$4EC	(C1.ASM,TEXT)	13
+___mm_sio_di1	$5B8	(C1.ASM,TEXT)	13
+___mm_sio_ei0	$4D0	(C1.ASM,TEXT)	28
+___mm_sio_ei1	$59C	(C1.ASM,TEXT)	28
+__CSTARTUP_INIT2__	$5D0	(C1.ASM,TEXT)	205
+___mm_sio_in1	$562	(C1.ASM,TEXT)	14
+_STACK_TOP	$3B47C	(C1.ASM,STACK)	-
+___mm_sio_init1	$4FA	(C1.ASM,TEXT)	103
+___mm_set_dtcvbr	$5C6	(C1.ASM,TEXT)	10
+START	$496	(C1.ASM,TEXT)	43
+_restart_pos	$480	(C1.ASM,TEXT)	22
+___mm_sio_ind1	$570	(C1.ASM,TEXT)	14
+___mm_sio_out1	$57E	(C1.ASM,TEXT)	16
+___mm_RM_PortIntOff	$15D01	(C1.ASM,DATA_CONST)	-
+___mm_RM_INTB	$15CFC	(C1.ASM,DATA_CONST)	-
+___mm_sio_flush0	$4C2	(C1.ASM,TEXT)	14
+___mm_sio_flush1	$58E	(C1.ASM,TEXT)	14
+___mm_RMDebugPort	$15D00	(C1.ASM,DATA_CONST)	-
+__dbg_flag	$15CF8	(C1.ASM,DATA_CONST)	-
+_stack_over_task	$6A4	(C1.ASM,TEXT)	7
+vector_table_top	$0	(C1.ASM,main)	5
+_USTACK_BTM	$39040	(C1.ASM,USTACK)	-
+_HEX_CHAR	$160FA	(ecu.ASM,DATA_CONST)	-
+_exiosts	$331E6	(ecu.ASM,BSS)	-
+_can_buf	$2B1CE	(ecu.ASM,BSS)	-
+_add_cyceve_list	$3392	(ecu.ASM,TEXT)	647
+_led_monit_sample	$20034	(ecu.ASM,DATA)	-
+_defset_confecu	$76C	(ecu.ASM,TEXT)	1832
+_stat_comm	$20010	(ecu.ASM,DATA)	-
+_extern_io_update_ex	$3CDC	(ecu.ASM,TEXT)	812
+_conf_ecu	$20922	(ecu.ASM,BSS)	-
+_defset_extlist_ex	$E94	(ecu.ASM,TEXT)	3811
+_led_monit_first	$20024	(ecu.ASM,DATA)	-
+_led_monit_count	$20030	(ecu.ASM,DATA)	-
+_status_timer	$331E2	(ecu.ASM,BSS)	-
+_delete_mbox_frame	$246E	(ecu.ASM,TEXT)	324
+_ext_list	$2112E	(ecu.ASM,BSS)	-
+_can_id_event	$36B2	(ecu.ASM,TEXT)	783
+_defset_rootmap	$6AC	(ecu.ASM,TEXT)	192
+_exio_chg_mark	$33426	(ecu.ASM,BSS)	-
+_port_input_ex	$3A5A	(ecu.ASM,TEXT)	173
+_ecu_input_update	$60A6	(ecu.ASM,TEXT)	355
+_DEF_IOPAT_00	$15FFA	(ecu.ASM,DATA_CONST)	-
+_delete_cyceve_list	$361A	(ecu.ASM,TEXT)	152
+_DEF_IOPAT_01	$16012	(ecu.ASM,DATA_CONST)	-
+_DEF_IOPAT_02	$1602A	(ecu.ASM,DATA_CONST)	-
+_add_mbox_frame	$27EE	(ecu.ASM,TEXT)	776
+_DEF_IOPAT_03	$16042	(ecu.ASM,DATA_CONST)	-
+_DEF_IOPAT_04	$1605A	(ecu.ASM,DATA_CONST)	-
+_can_init	$49EC	(ecu.ASM,TEXT)	984
+_DEF_IOPAT_05	$16072	(ecu.ASM,DATA_CONST)	-
+_DEF_IOPAT_06	$1608A	(ecu.ASM,DATA_CONST)	-
+_DEF_IOPAT_07	$160A2	(ecu.ASM,DATA_CONST)	-
+_can_do_txmb_ch0	$1FF8	(ecu.ASM,TEXT)	270
+_can_do_txmb_ch1	$2106	(ecu.ASM,TEXT)	270
+_can_do_txmb_ch2	$2214	(ecu.ASM,TEXT)	270
+_delete_waiting_list	$39C2	(ecu.ASM,TEXT)	152
+_add_extern_io	$4008	(ecu.ASM,TEXT)	614
+_ecu_job	$4EC6	(ecu.ASM,TEXT)	1613
+_can_tx_mb	$25B2	(ecu.ASM,TEXT)	470
+_DLC_VALUE_TABLE	$160BA	(ecu.ASM,DATA_CONST)	-
+_led	$20008	(ecu.ASM,DATA)	-
+_job	$20004	(ecu.ASM,DATA)	-
+_CH_MAP_PAT	$15D02	(ecu.ASM,DATA_CONST)	1033
+_ds_x_lost_counter	$20018	(ecu.ASM,DATA)	-
+_can_timer_send	$3186	(ecu.ASM,TEXT)	523
+_timer_count	$331DE	(ecu.ASM,BSS)	-
+_set_frame_data	$426E	(ecu.ASM,TEXT)	90
+_send_mbox_frame	$2788	(ecu.ASM,TEXT)	101
+_DEF_FRAME_BUFFER	$15D0A	(ecu.ASM,DATA_CONST)	-
+_rout_map	$20122	(ecu.ASM,BSS)	82208
+_ds_xross_pt_index	$20014	(ecu.ASM,DATA)	-
+_rxmb_buf	$33C2A	(ecu.ASM,BSS)	-
+_send_msg	$2213E	(ecu.ASM,BSS)	-
+_can_to_exio	$3342A	(ecu.ASM,BSS)	-
+_ecu_timeup	$4DC4	(ecu.ASM,TEXT)	96
+_can_random_mask	$2F1CE	(ecu.ASM,BSS)	-
+_ecu_rxmb_proc	$4E24	(ecu.ASM,TEXT)	162
+_defset_framedat	$1D78	(ecu.ASM,TEXT)	110
+_search_wait_id	$1E62	(ecu.ASM,TEXT)	165
+_can_pin_init	$4842	(ecu.ASM,TEXT)	425
+_ecu_status	$5514	(ecu.ASM,TEXT)	992
+_port_output_ex	$3B08	(ecu.ASM,TEXT)	467
+_ext_list_count	$2192E	(ecu.ASM,BSS)	-
+_led_monit_ch	$20020	(ecu.ASM,DATA)	-
+_led_monit_id	$2001C	(ecu.ASM,DATA)	-
+_can_check_mb	$1F08	(ecu.ASM,TEXT)	240
+_can_recv_frame	$2AF6	(ecu.ASM,TEXT)	882
+_can_send_proc	$2E68	(ecu.ASM,TEXT)	798
+_repro_mode	$20000	(ecu.ASM,DATA)	56
+_ecu_put_command	$5DCA	(ecu.ASM,TEXT)	731
+_ecu_set_command	$5B1C	(ecu.ASM,TEXT)	686
+_led_monit_time	$2002C	(ecu.ASM,DATA)	-
+_ecu_init	$42C8	(ecu.ASM,TEXT)	1401
+_led_monit_slow	$20028	(ecu.ASM,DATA)	-
+_stat_update_id	$2000C	(ecu.ASM,DATA)	-
+_wait_tup	$21932	(ecu.ASM,BSS)	-
+_can_powtx_delmb	$2322	(ecu.ASM,TEXT)	331
+_exio_chg	$333E6	(ecu.ASM,BSS)	-
+_search_target_id	$1DE6	(ecu.ASM,TEXT)	123
+_mbox_sel	$331CE	(ecu.ASM,BSS)	-
+_ecu_get_command	$58F4	(ecu.ASM,TEXT)	551
+_CAN0_TXM0_ISR	$6990	(r_can_api.ASM,TEXT)	289
+_CAN2_TXM2_ISR	$700C	(r_can_api.ASM,TEXT)	289
+_CAN1_RXF1_ISR	$6F84	(r_can_api.ASM,TEXT)	68
+_R_CAN_ModuleStopStateCancel	$690E	(r_can_api.ASM,TEXT)	130
+_CANX_ERS_ISR	$734A	(r_can_api.ASM,TEXT)	767
+_CAN1_RXM1_ISR	$6DF0	(r_can_api.ASM,TEXT)	404
+_CAN1_TXF1_ISR	$6FC8	(r_can_api.ASM,TEXT)	68
+_monit_timeover	$620A	(r_can_api.ASM,TEXT)	186
+_CAN1_TXM1_ISR	$6CCE	(r_can_api.ASM,TEXT)	289
+_CAN0_RXF0_ISR	$6C46	(r_can_api.ASM,TEXT)	68
+_CAN2_RXF2_ISR	$72C2	(r_can_api.ASM,TEXT)	68
+_CAN0_RXM0_ISR	$6AB2	(r_can_api.ASM,TEXT)	404
+_R_CAN_Create	$62C4	(r_can_api.ASM,TEXT)	594
+_CAN2_RXM2_ISR	$712E	(r_can_api.ASM,TEXT)	404
+_CAN0_TXF0_ISR	$6C8A	(r_can_api.ASM,TEXT)	68
+_CAN2_TXF2_ISR	$7306	(r_can_api.ASM,TEXT)	68
+_R_CAN_SetBitrate	$6710	(r_can_api.ASM,TEXT)	147
+_R_CAN_Control	$6516	(r_can_api.ASM,TEXT)	505
+_CAN_CHANNELS	$20038	(r_can_api.ASM,DATA)	12
+_rtc_init	$764A	(rtc.ASM,TEXT)	275
+_rtc_time_read	$775E	(rtc.ASM,TEXT)	108
+_sci_com	$34242	(sci.ASM,BSS)	14560
+_sci_err	$86F2	(sci.ASM,TEXT)	228
+_sci_load	$8600	(sci.ASM,TEXT)	241
+_sci_rts_control	$88CC	(sci.ASM,TEXT)	119
+_sci_puts	$8288	(sci.ASM,TEXT)	279
+_sci0_init	$77CA	(sci.ASM,TEXT)	755
+_sci0_tei	$84BE	(sci.ASM,TEXT)	160
+_sci0_rxi	$87D6	(sci.ASM,TEXT)	75
+_sci2_tei	$855E	(sci.ASM,TEXT)	162
+_sci0_txi	$83A0	(sci.ASM,TEXT)	142
+_sci2_init	$7ABE	(sci.ASM,TEXT)	732
+_sci2_rxi	$8822	(sci.ASM,TEXT)	77
+_sci2_txi	$842E	(sci.ASM,TEXT)	144
+_sci0_putb	$7E58	(sci.ASM,TEXT)	279
+_sci1_putb	$7F70	(sci.ASM,TEXT)	127
+_sci2_putb	$7FF0	(sci.ASM,TEXT)	279
+_sci3_putb	$8108	(sci.ASM,TEXT)	127
+_sci_txbytes	$7DFC	(sci.ASM,TEXT)	91
+_sci_get_char	$8944	(sci.ASM,TEXT)	158
+_sci5_putb	$8188	(sci.ASM,TEXT)	127
+_sci6_putb	$8208	(sci.ASM,TEXT)	127
+_sci_putcheck	$7D9A	(sci.ASM,TEXT)	98
+_sci_get_check	$8870	(sci.ASM,TEXT)	91
+_main	$9A30	(main.ASM,TEXT)	539
+_iwdt_refresh	$89E2	(main.ASM,TEXT)	98
+_PortInit	$8C2A	(main.ASM,TEXT)	169
+_logging	$8BB6	(main.ASM,TEXT)	116
+_def_ecu_date	$1654C	(main.ASM,DATA_CONST)	-
+_def_ecu_corp	$1651C	(main.ASM,DATA_CONST)	80
+_def_ecu_name	$1652C	(main.ASM,DATA_CONST)	-
+_wdt_init	$8A44	(main.ASM,TEXT)	84
+_def_ecu_time	$1655C	(main.ASM,DATA_CONST)	-
+_def_ecu_vars	$1653C	(main.ASM,DATA_CONST)	-
+_comm_job	$97A2	(main.ASM,TEXT)	592
+_can_ctrl	$99F2	(main.ASM,TEXT)	62
+_retport	$20044	(main.ASM,DATA)	8
+_console_port	$20048	(main.ASM,DATA)	-
+_sci_console	$37B22	(main.ASM,BSS)	1160
+_SendPC	$8B1A	(main.ASM,TEXT)	155
+_rtc_command_job	$8CD4	(main.ASM,TEXT)	394
+_send_var	$8A98	(main.ASM,TEXT)	129
+_sci2_console	$37D26	(main.ASM,BSS)	-
+_command_job	$8E5E	(main.ASM,TEXT)	2372
+_comm_ram_buffer	$37F2A	(main.ASM,BSS)	-
+_after_call	$9D22	(timer.ASM,TEXT)	151
+_cmt0_call	$3802A	(timer.ASM,BSS)	-
+_cmt1_call	$3807E	(timer.ASM,BSS)	-
+_cmt1_ni_check	$A0E6	(timer.ASM,TEXT)	262
+_cmt0_init	$9C4C	(timer.ASM,TEXT)	213
+_cmt0_job	$9E22	(timer.ASM,TEXT)	125
+_cmt0_int	$9EA0	(timer.ASM,TEXT)	199
+_cmt1_last	$38076	(timer.ASM,BSS)	-
+_cmt1_int	$A274	(timer.ASM,TEXT)	244
+_cmt1_init	$9F68	(timer.ASM,TEXT)	183
+_cmt1_msec	$38072	(timer.ASM,BSS)	-
+_cmt0_time	$37FAA	(timer.ASM,BSS)	216
+_cmt1_time	$3807A	(timer.ASM,BSS)	-
+_cmt0_tupf	$37FEA	(timer.ASM,BSS)	-
+_cmt1_stop	$A1EC	(timer.ASM,TEXT)	135
+_cmt1_tupf	$3806E	(timer.ASM,BSS)	-
+_check_timer	$9DBA	(timer.ASM,TEXT)	103
+_cmt1_start	$A020	(timer.ASM,TEXT)	197
+_freerun_timer	$3806A	(timer.ASM,BSS)	-
+_R_FlashErase	$AE38	(r_Flash_API_RX600.ASM,TEXT)	287
+_g_flash_BlockAddresses	$16792	(r_Flash_API_RX600.ASM,DATA_CONST)	344
+_R_FlashGetStatus	$A87A	(r_Flash_API_RX600.ASM,TEXT)	70
+_R_FlashWrite	$B012	(r_Flash_API_RX600.ASM,TEXT)	561
+_R_FlashDataAreaAccess	$A802	(r_Flash_API_RX600.ASM,TEXT)	120
+_R_FlashDataAreaBlankCheck	$A62E	(r_Flash_API_RX600.ASM,TEXT)	467
+_Init_FlashData	$B3A2	(flash_data.ASM,TEXT)	58
+_RSPI1_SPRI1_ISR	$B3DC	(uSD_rspi1.ASM,TEXT)	91
+_RSPI1_SPTI1_ISR	$B438	(uSD_rspi1.ASM,TEXT)	90
+_RSPI1_SPII1_ISR	$B492	(uSD_rspi1.ASM,TEXT)	116
+_usd_spi_com	$3808A	(uSD_rspi1.ASM,BSS)	20
+_CAN3_CallbackTxSet0	$C85E	(can3_spi2.ASM,TEXT)	213
+_CAN3_CallbackTxSet1	$C934	(can3_spi2.ASM,TEXT)	217
+_CAN3_CallbackTxSet2	$CA0E	(can3_spi2.ASM,TEXT)	217
+_can3_procwait	$BB98	(can3_spi2.ASM,TEXT)	217
+_CAN3_CallbackRx0	$C622	(can3_spi2.ASM,TEXT)	286
+_CAN3_CallbackRx1	$C740	(can3_spi2.ASM,TEXT)	286
+_can3_stat_event	$CE0C	(can3_spi2.ASM,TEXT)	1124
+_dtc_table	$20082	(can3_spi2.ASM,DATA)	-
+_tx_act_timer	$20076	(can3_spi2.ASM,DATA)	-
+_CAN3_TxSet	$CBAA	(can3_spi2.ASM,TEXT)	609
+_dtc_init	$B506	(can3_spi2.ASM,TEXT)	148
+_can3_request	$C48E	(can3_spi2.ASM,TEXT)	403
+_RSPI2_SPRI2_ISR	$C39C	(can3_spi2.ASM,TEXT)	108
+_CAN3_GetTxMCTL	$CAE8	(can3_spi2.ASM,TEXT)	193
+_can3_job_id	$20062	(can3_spi2.ASM,DATA)	-
+_mcp_bfprts	$380AA	(can3_spi2.ASM,BSS)	-
+_can3_recv_call	$BB2E	(can3_spi2.ASM,TEXT)	106
+_rspi_req	$380A2	(can3_spi2.ASM,BSS)	-
+_RSPI2_SPTI2_ISR	$C408	(can3_spi2.ASM,TEXT)	54
+_mcp_config	$380AE	(can3_spi2.ASM,BSS)	-
+_mcp_statctrl	$380A6	(can3_spi2.ASM,BSS)	-
+_can3_job	$BC72	(can3_spi2.ASM,TEXT)	1483
+_can3_getstat_callback	$BAF2	(can3_spi2.ASM,TEXT)	59
+_can3_now	$3809E	(can3_spi2.ASM,BSS)	356
+_can3_txcheck	$C23E	(can3_spi2.ASM,TEXT)	349
+_can3_init	$B9FA	(can3_spi2.ASM,TEXT)	248
+_mcp_mbx_rp	$2008A	(can3_spi2.ASM,DATA)	-
+_mcp_mbx_wp	$20086	(can3_spi2.ASM,DATA)	-
+_mcp_bitx	$380FE	(can3_spi2.ASM,BSS)	-
+_tx_act	$2006A	(can3_spi2.ASM,DATA)	-
+_ICU_IRQ0_ISR	$D270	(can3_spi2.ASM,TEXT)	90
+_RSPI2_SPII2_ISR	$C43E	(can3_spi2.ASM,TEXT)	80
+_rspi2_init	$B59A	(can3_spi2.ASM,TEXT)	1119
+_mcp_mbx	$38102	(can3_spi2.ASM,BSS)	-
+_stat_event_flag	$20066	(can3_spi2.ASM,DATA)	-
+_mcp_rxb	$380E2	(can3_spi2.ASM,BSS)	-
+_ICU_IRQ6_ISR	$D2CA	(can3_spi2.ASM,TEXT)	129
+_mcp_txb	$380B6	(can3_spi2.ASM,BSS)	-
+_ICU_IRQ7_ISR	$D34C	(can3_spi2.ASM,TEXT)	129
+_rspi_req_PP	$2005E	(can3_spi2.ASM,DATA)	-
+_rspi_req_RP	$2005A	(can3_spi2.ASM,DATA)	-
+_rspi_req_WP	$20056	(can3_spi2.ASM,DATA)	56
+_obd2_ret_counter	$2008E	(obd2.ASM,DATA)	4
+_obd2_mode1	$D3CE	(obd2.ASM,TEXT)	3787
+_obd2_mode2	$E29A	(obd2.ASM,TEXT)	171
+_obd2_mode3	$E346	(obd2.ASM,TEXT)	115
+_obd2_mode4	$E3BA	(obd2.ASM,TEXT)	89
+_obd2_mode5	$E414	(obd2.ASM,TEXT)	547
+_obd2_mode6	$E638	(obd2.ASM,TEXT)	89
+_obd2_mode7	$E692	(obd2.ASM,TEXT)	89
+_obd2_mode8	$E6EC	(obd2.ASM,TEXT)	89
+_obd2_mode9	$E746	(obd2.ASM,TEXT)	1251
+_obd2_modeA	$EC2A	(obd2.ASM,TEXT)	89
+_obd2_job	$EC84	(obd2.ASM,TEXT)	453
+_obd2_req	$38202	(obd2.ASM,BSS)	16
+_obd2_ret	$3820A	(obd2.ASM,BSS)	-
+_ecu_data_write	$EF4A	(reprogram.ASM,TEXT)	397
+_bootclear	$EED8	(reprogram.ASM,TEXT)	114
+_bootcopy	$EE4A	(reprogram.ASM,TEXT)	142
+_ecu_data_check	$F1AC	(reprogram.ASM,TEXT)	128
+_ecu_data_erase	$F0D8	(reprogram.ASM,TEXT)	212
+_flash_init	$F29A	(flash_rom.ASM,TEXT)	208
+_reset_fcu	$F22C	(flash_rom.ASM,TEXT)	109
+_can_tp_consecutive	$F710	(cantp.ASM,TEXT)	351
+_can_tp_job	$F96C	(cantp.ASM,TEXT)	1316
+_can_tp_build	$F3B2	(cantp.ASM,TEXT)	245
+_tp_pack	$38212	(cantp.ASM,BSS)	592
+_can_tp_flow	$F68A	(cantp.ASM,TEXT)	133
+_can_tp_init	$F36A	(cantp.ASM,TEXT)	71
+_can_tp_txecheck	$F910	(cantp.ASM,TEXT)	92
+_can_tp_send	$F4A8	(cantp.ASM,TEXT)	482
+_can_tp_txendreq	$F870	(cantp.ASM,TEXT)	160
+_can_uds_init	$FE90	(uds.ASM,TEXT)	70
+_uds_sid_10	$FF1A	(uds.ASM,TEXT)	188
+_uds_sid_11	$FFD6	(uds.ASM,TEXT)	208
+_uds_sid_22	$102DA	(uds.ASM,TEXT)	1029
+_uds_sid_23	$106E0	(uds.ASM,TEXT)	153
+_uds_sid_34	$10B48	(uds.ASM,TEXT)	1138
+_uds_sid_35	$10FBA	(uds.ASM,TEXT)	448
+_uds_sid_27	$100A6	(uds.ASM,TEXT)	498
+_uds_sid_36	$1117A	(uds.ASM,TEXT)	726
+_uds_sid_37	$11450	(uds.ASM,TEXT)	265
+_uds_sid_2e	$1077A	(uds.ASM,TEXT)	769
+_uds_sid_3d	$10A7C	(uds.ASM,TEXT)	203
+_uds_sid_3e	$10298	(uds.ASM,TEXT)	66
+_uds_job	$1155A	(uds.ASM,TEXT)	679
+_uds_p2_can_server_max	$20096	(uds.ASM,DATA)	-
+_uds_security_access	$200A2	(uds.ASM,DATA)	-
+_uds_timeup	$FED6	(uds.ASM,TEXT)	67
+_uds_p2e_can_server_max	$2009A	(uds.ASM,DATA)	-
+_uds_diag_session	$20092	(uds.ASM,DATA)	20
+_uds_reset_request	$2009E	(uds.ASM,DATA)	-
+_uds_load	$38462	(uds.ASM,BSS)	20
+___mm_fi_undefexc_yscope00	$11C02	(YSDBG_RX.ASM,TEXT)	128
+___mm_fi_undefexc_yscope01	$11C06	(YSDBG_RX.ASM,TEXT)	124
+___mm_fi_undefexc_yscope10	$11C2A	(YSDBG_RX.ASM,TEXT)	88
+___mm_fi_undefexc_yscope02	$11C0A	(YSDBG_RX.ASM,TEXT)	120
+___mm_fi_undefexc_yscope11	$11C2E	(YSDBG_RX.ASM,TEXT)	84
+___mm_fi_undefexc_yscope03	$11C0E	(YSDBG_RX.ASM,TEXT)	116
+___mm_fi_undefexc_yscope20	$11C52	(YSDBG_RX.ASM,TEXT)	48
+___mm_fi_undefexc_yscope12	$11C32	(YSDBG_RX.ASM,TEXT)	80
+___mm_fi_undefexc_yscope04	$11C12	(YSDBG_RX.ASM,TEXT)	112
+___mm_fi_undefexc_yscope21	$11C56	(YSDBG_RX.ASM,TEXT)	44
+___mm_fi_undefexc_yscope13	$11C36	(YSDBG_RX.ASM,TEXT)	76
+___mm_fi_undefexc_yscope05	$11C16	(YSDBG_RX.ASM,TEXT)	108
+___mm_fi_undefexc_yscope30	$11C7A	(YSDBG_RX.ASM,TEXT)	8
+___mm_fi_undefexc_yscope22	$11C5A	(YSDBG_RX.ASM,TEXT)	40
+___mm_fi_undefexc_yscope14	$11C3A	(YSDBG_RX.ASM,TEXT)	72
+___mm_fi_undefexc_yscope06	$11C1A	(YSDBG_RX.ASM,TEXT)	104
+___mm_fi_undefexc_yscope31	$11C7E	(YSDBG_RX.ASM,TEXT)	4
+___mm_fi_undefexc_yscope23	$11C5E	(YSDBG_RX.ASM,TEXT)	36
+___mm_fi_undefexc_yscope15	$11C3E	(YSDBG_RX.ASM,TEXT)	68
+___mm_fi_undefexc_yscope07	$11C1E	(YSDBG_RX.ASM,TEXT)	100
+___mm_fi_undefexc_yscope24	$11C62	(YSDBG_RX.ASM,TEXT)	32
+___mm_fi_undefexc_yscope16	$11C42	(YSDBG_RX.ASM,TEXT)	64
+___mm_fi_undefexc_yscope08	$11C22	(YSDBG_RX.ASM,TEXT)	96
+___mm_fi_undefexc_yscope25	$11C66	(YSDBG_RX.ASM,TEXT)	28
+___mm_fi_undefexc_yscope17	$11C46	(YSDBG_RX.ASM,TEXT)	60
+___mm_fi_undefexc_yscope09	$11C26	(YSDBG_RX.ASM,TEXT)	92
+___mm_fi_undefexc_yscope26	$11C6A	(YSDBG_RX.ASM,TEXT)	24
+___mm_fi_undefexc_yscope18	$11C4A	(YSDBG_RX.ASM,TEXT)	56
+___mm_fi_undefexc_yscope27	$11C6E	(YSDBG_RX.ASM,TEXT)	20
+___mm_fi_undefexc_yscope19	$11C4E	(YSDBG_RX.ASM,TEXT)	52
+___mm_fi_undefexc_yscope28	$11C72	(YSDBG_RX.ASM,TEXT)	16
+___mm_fi_undefexc_yscope29	$11C76	(YSDBG_RX.ASM,TEXT)	12
+___mm_undefint	$11802	(YSDBG_RX.ASM,TEXT)	1152
+__d_add	$11C82	(FCLIB.ASM,TEXT)	31
+__d_dtof	$11D56	(FCLIB.ASM,TEXT)	25
+__d_dtol	$11D3C	(FCLIB.ASM,TEXT)	25
+__d_cmp	$11D02	(FCLIB.ASM,TEXT)	34
+__d_div	$11CE2	(FCLIB.ASM,TEXT)	31
+__d_mul	$11CC2	(FCLIB.ASM,TEXT)	31
+__d_sub	$11CA2	(FCLIB.ASM,TEXT)	31
+__d_sltod	$11D24	(FCLIB.ASM,TEXT)	24
+_WriteINTB	$12BE2	(IORX.ASM,TEXT)	4
+__init_intb__	$12BE6	(IORX.ASM,TEXT)	8
+__di	$12BF2	(IORX.ASM,TEXT)	3
+__ei	$12BEE	(IORX.ASM,TEXT)	3
+___mm_getc_yscope	$12BDC	(IORX.ASM,TEXT)	5
+_TransitSuperModeInt	$12BF6	(IORX.ASM,TEXT)	11
+___mm_putc_yscope	$12BD6	(IORX.ASM,TEXT)	5
+__fgetc_sim	$12BDC	(IORX.ASM,TEXT)	5
+__fputc_sim	$12BD6	(IORX.ASM,TEXT)	5
+__Ctype	$200A6	(ctype.ASM,DATA)	4
+_toupper	$12C02	(ctype.ASM,TEXT)	69
+_errno	$200AA	(ERRNO.ASM,DATA)	4
+__Dnorm	$12C48	(MATH.ASM,TEXT)	140
+_vsprintf	$14182	(PRINTF.ASM,TEXT)	61
+_sprintf	$14142	(PRINTF.ASM,TEXT)	64
+__Scanf	$148A6	(STDIO.ASM,TEXT)	1821
+_sscanf	$14FE2	(STDIO.ASM,TEXT)	50
+_rand	$153F2	(STDLIB.ASM,TEXT)	34
+_strtod	$15014	(STDLIB.ASM,TEXT)	990
+_memcmp	$15540	(STRING.ASM,TEXT)	61
+_memcpy	$1550E	(STRING.ASM,TEXT)	50
+_memset	$1557E	(STRING.ASM,TEXT)	50
+_strcat	$1543A	(STRING.ASM,TEXT)	56
+_strchr	$154CA	(STRING.ASM,TEXT)	30
+_strncmp	$15472	(STRING.ASM,TEXT)	87
+_strcpy	$15414	(STRING.ASM,TEXT)	38
+_strlen	$154E8	(STRING.ASM,TEXT)	38
+_YDrvUsbInt	$155B0	(..\YDrvUsbCdcPoll4.ASM,TEXT)	216
+_YDrvUsbRcvSetup	$15688	(..\YDrvUsbCdcPoll4.ASM,TEXT)	44
+
+Interrupt Function List
+Max Interrupt Number 288
+IntVectNo:FunctionName,FileName(line)
+  24:_restart_pos,C1.C(488)
+  51:_CAN0_TXM0_ISR,r_can_api.c(1532)
+  50:_CAN0_RXM0_ISR,r_can_api.c(1574)
+  48:_CAN0_RXF0_ISR,r_can_api.c(1616)
+  49:_CAN0_TXF0_ISR,r_can_api.c(1629)
+  55:_CAN1_TXM1_ISR,r_can_api.c(1647)
+  54:_CAN1_RXM1_ISR,r_can_api.c(1689)
+  52:_CAN1_RXF1_ISR,r_can_api.c(1727)
+  53:_CAN1_TXF1_ISR,r_can_api.c(1740)
+  59:_CAN2_TXM2_ISR,r_can_api.c(1758)
+  58:_CAN2_RXM2_ISR,r_can_api.c(1800)
+  56:_CAN2_RXF2_ISR,r_can_api.c(1837)
+  57:_CAN2_TXF2_ISR,r_can_api.c(1850)
+ 106:_CANX_ERS_ISR,r_can_api.c(1866)
+ 215:_sci0_txi,sci.c(1860)
+ 221:_sci2_txi,sci.c(1933)
+ 216:_sci0_tei,sci.c(2083)
+ 222:_sci2_tei,sci.c(2135)
+ 114:_sci_err,sci.c(2346)
+ 214:_sci0_rxi,sci.c(2444)
+ 220:_sci2_rxi,sci.c(2466)
+  28:_cmt0_int,timer.c(224)
+  29:_cmt1_int,timer.c(406)
+  42:_RSPI1_SPRI1_ISR,uSD_rspi1.c(240)
+  43:_RSPI1_SPTI1_ISR,uSD_rspi1.c(256)
+  44:_RSPI1_SPII1_ISR,uSD_rspi1.c(272)
+  45:_RSPI2_SPRI2_ISR,can3_spi2.c(738)
+  46:_RSPI2_SPTI2_ISR,can3_spi2.c(755)
+  47:_RSPI2_SPII2_ISR,can3_spi2.c(763)
+  64:_ICU_IRQ0_ISR,can3_spi2.c(1278)
+  70:_ICU_IRQ6_ISR,can3_spi2.c(1287)
+  71:_ICU_IRQ7_ISR,can3_spi2.c(1297)
+  12:_TransitSuperModeInt,IORX.ASM
+  35:_YDrvUsbInt,..\YDrvUsbCdcPoll4.ASM
+
+

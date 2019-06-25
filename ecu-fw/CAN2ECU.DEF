@@ -1,0 +1,12 @@
+;segment   start     end       rom
+main /i    $00000000          ,$00000000
+TEXT
+DATA_CONST          -$0001FFFF
+DATA       $00020000
+BSS
+HEAP
+USTACK     $00039000
+STACK               -$0003CFFF
+DTCREQ     $0003D000-$0003DFFF
+DTCVBR     $0003E000-$0003EFFF
+_RX_DESC   $8000000

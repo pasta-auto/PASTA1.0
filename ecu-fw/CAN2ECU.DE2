@@ -1,0 +1,13 @@
+;segment   start     end       rom
+FIX_INTV /f $FFFFFF80, $FFFFFF80 ;固定割り込みベクター
+main /i    $00000000          ,$FFF40000
+TEXT
+DATA_CONST          -$0001FFFF
+DATA       $00020000
+BSS
+HEAP
+USTACK
+STACK               -$0003CFFF
+DTCREQ     $0003D000-$0003DFFF
+DTCVBR     $0003E000-$0003EFFF
+_RX_DESC  $8000000
