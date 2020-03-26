@@ -48,7 +48,7 @@ PASTA is designed and developed with the following philosophy:
 
 - GitHub: [pasta-auto](https://github.com/pasta-auto)
 - Twitter: [@pasta_auto](https://twitter.com/pasta_auto)
-- Email: [pasta_auto@jp.toyota-itc.com](mailto:pasta_auto@jp.toyota-itc.com)
+- Email: [tsu-toyama@toyota-tokyo.tech](mailto:tsu-toyama@toyota-tokyo.tech)
 
 Note:
 - Please kindly note that we may not be able to reply all the messages because of our limited resources.
