@@ -22,27 +22,27 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile: usb.h,v $
-// $Revision: 1.1 $
-// $Date: 2016/03/04 06:39:39 $
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile: usb.h,v $
+ * $Revision: 1.1 $
+ * $Date: 2016/03/04 06:39:39 $
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 
 #if !defined(_usb_h_)
 #define _usb_h_
 
-extern int usb_func;		// 0:none
-							// 1:peripheral
-							// 2:host
+extern int usb_func; /* 0:none
+                      * 1:peripheral
+                      * 2:host*/
 
-void usb_init(void);
-int usb_getch(void);
-int usb_putch(unsigned char c);
-void usb_flush(void);
-int usb_puts(char *str);
+void    usb_init(void);
+int     usb_getch(void);
+int     usb_putch(unsigned char c);
+void    usb_flush(void);
+int     usb_puts(char *str);
 
-#endif	// !defined(_usb_h_)
+#endif // !defined(_usb_h_)

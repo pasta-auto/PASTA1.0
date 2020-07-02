@@ -22,59 +22,59 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile$
-// $Revision$
-// $Date$
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile$
+ * $Revision$
+ * $Date$
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 
 #if !defined(_altypes_h_)
 #define _altypes_h_
 
-/* bsd */
-typedef unsigned char		u_char;
-typedef unsigned short		u_short;
-typedef unsigned int		u_int;
-typedef unsigned long		u_long;
+// bsd 
+typedef unsigned char   u_char;
+typedef unsigned short  u_short;
+typedef unsigned int    u_int;
+typedef unsigned long   u_long;
 
-/* sysv */
-typedef unsigned char		unchar;
-typedef unsigned short		ushort;
-typedef unsigned int		uint;
-typedef unsigned long		ulong;
+// sysv 
+typedef unsigned char   unchar;
+typedef unsigned short  ushort;
+typedef unsigned int    uint;
+typedef unsigned long   ulong;
 
-/* linux kernel's */
-typedef	char				int8_t;
-typedef unsigned char		uint8_t;
-typedef unsigned short		u16;
-typedef unsigned short		uint16_t;
-typedef unsigned int 		__u32;
-typedef	__u32				u_int32_t;
-typedef u_int32_t           uint32_t;
-typedef signed long			int32_t;
+// linux kernel's 
+typedef char            int8_t;
+typedef unsigned char   uint8_t;
+typedef unsigned short  u16;
+typedef unsigned short  uint16_t;
+typedef unsigned int    __u32;
+typedef __u32           u_int32_t;
+typedef u_int32_t       uint32_t;
+typedef signed long     int32_t;
 
-/* Renesas */
-typedef signed char			_SBYTE;
-typedef unsigned char		_UBYTE;
-typedef signed short		_SWORD;
-typedef unsigned short		_UWORD;
-typedef signed int			_SINT;
-typedef unsigned int		_UINT;
-typedef signed long			_SDWORD;
-typedef unsigned long		_UDWORD;
+// Renesas 
+typedef signed char     _SBYTE;
+typedef unsigned char   _UBYTE;
+typedef signed short    _SWORD;
+typedef unsigned short  _UWORD;
+typedef signed int      _SINT;
+typedef unsigned int    _UINT;
+typedef signed long     _SDWORD;
+typedef unsigned long   _UDWORD;
 
-/* Renesas for RX */
-typedef uint32_t			natural_uint_t;
-typedef int32_t				natural_int_t;
+// Renesas for RX 
+typedef uint32_t    natural_uint_t;
+typedef int32_t     natural_int_t;
 
-/* misc */
-typedef unsigned char		uchar;
-typedef unsigned int		uint32;
-typedef int					bool;
-typedef short				int16_t;
+// misc 
+typedef unsigned char   uchar;
+typedef unsigned int    uint32;
+typedef int             bool;
+typedef short           int16_t;
 
-#endif	/* !defined(_altypes_h_) */
+#endif // !defined(_altypes_h_)

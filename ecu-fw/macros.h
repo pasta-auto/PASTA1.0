@@ -22,22 +22,22 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile: macros.h,v $
-// $Revision: 1.1 $
-// $Date: 2016/03/23 07:32:57 $
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile: macros.h,v $
+ * $Revision: 1.1 $
+ * $Date: 2016/03/23 07:32:57 $
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 
 #if !defined(_macros_h_)
 #define _macros_h_
 
-#define	_B1(a)	(1<<(a))
-#define	_B0(a)	(0)
-#define	_B(a,b)	((a)<<(b))
+#define _B1(a)     (1 << (a))
+#define _B0(a)           (0)
+#define _B(a, b) ((a) << (b))
 
 #if defined(false)
 #undef false
@@ -46,18 +46,18 @@
 #undef true
 #endif
 
-#define false			0
-#define	true			1
+#define false 0
+#define true  1
 
 #define __evenaccess
 
-#define	BIT0		_B(1,0)				// bit0
-#define	BIT1		_B(1,1)				// bit1
-#define	BIT2		_B(1,2)				// bit2
-#define	BIT3		_B(1,3)				// bit3
-#define	BIT4		_B(1,4)				// bit4
-#define	BIT5		_B(1,5)				// bit5
-#define	BIT6		_B(1,6)				// bit6
-#define	BIT7		_B(1,7)				// bit7
+#define BIT0 _B(1, 0) // bit0 
+#define BIT1 _B(1, 1) // bit1 
+#define BIT2 _B(1, 2) // bit2 
+#define BIT3 _B(1, 3) // bit3 
+#define BIT4 _B(1, 4) // bit4 
+#define BIT5 _B(1, 5) // bit5 
+#define BIT6 _B(1, 6) // bit6 
+#define BIT7 _B(1, 7) // bit7 
 
-#endif	/* !defined(_macros_h_) */
+#endif // !defined(_macros_h_)

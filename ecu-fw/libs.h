@@ -22,40 +22,40 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile$
-// $Revision$
-// $Date$
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile$
+ * $Revision$
+ * $Date$
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 
 #if !defined(_libs_h_)
 #define _libs_h_
 
-extern void chomp( char s[] );
+extern void chomp(char s[]);
 
-enum _loglvl {LOG_EMERG=0
-			  ,LOG_ALERT
-			  ,LOG_CRIT
-			  ,LOG_ERR
-			  ,LOG_WARNING
-			  ,LOG_NOTICE
-			  ,LOG_INFO
-			  ,LOG_DEBUG };
-extern void	logging(char *fmt, ...);
-//extern void	logging(int loglvl, char *bp, char *fmt, ...);
+enum _loglvl {
+    LOG_EMERG = 0,
+    LOG_ALERT,
+    LOG_CRIT,
+    LOG_ERR,
+    LOG_WARNING,
+    LOG_NOTICE,
+    LOG_INFO,
+    LOG_DEBUG
+};
+extern void logging(char *fmt, ...);
 extern int  getLogLevel(void);
 extern void setLogLevel(int level);
-extern int get_token_buf(const char *ptr,
-						 char *cp_sept,   /* セパレータ列 ex:" ,\t" */
-						 char  c_cmnt,	   /* コメント識別キャラクタ ex:'#' */
-						 char *cp_token[],	/* tokenへのポインター格納領域 */
-						 int   token_max,
-						 int  *ip_tokcnt); 	/* 切り出した文字列のカウンタ値 */
+extern int  get_token_buf(const char *ptr, char *cp_sept, // Separator column ex:" ,\t" 
+                          char c_cmnt,                    // Comment identification character ex:'#' 
+                          char *cp_token[],               // Storage area for pointer to token 
+                          int token_max,
+                          int *ip_tokcnt);                // Counter value of the extracted character string 
 
 extern int a2bcd(char *ascii, char *bcd);
 
-#endif	/* !defined(_libs_h_) */
+#endif // !defined(_libs_h_)

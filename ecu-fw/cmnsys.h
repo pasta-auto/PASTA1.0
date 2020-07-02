@@ -22,44 +22,42 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile$
-// $Revision$
-// $Date$
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile$
+ * $Revision$
+ * $Date$
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 
 #if !defined(_cmnsys_h_)
 #define _cmnsys_h_
 
-//#include "ether.h"
 #include "rtc.h"
 
-// 定数定義
-#define SIZE_OF_WORKBUF		512
-#define SIZE_OF_LINE		128
-#define BUFSIZE				256
+// Constant definition 
+#define SIZE_OF_WORKBUF 512
+#define SIZE_OF_LINE    128
+#define BUFSIZE         256
 
-/* Declare structure to hold received ethernet frames */
-typedef struct
-{
+// Define structure to hold received ethernet frames 
+typedef struct {
     uint8_t frame[BUFSIZE];
     int32_t len;
     uint8_t wk[12];
 } USER_BUFFER;
-// 共用制御ブロック構造体定義
+// Shared control block structure definition 
 struct _common_cb {
-	uint  LogLevelValue;
-	uchar wb[SIZE_OF_WORKBUF];
-	uchar lines[SIZE_OF_LINE];
-	USER_BUFFER recv[10];
-	int rtcInitDone;
-	time_bcd_t tm;
-} ;
+    uint        LogLevelValue;
+    uchar       wb[SIZE_OF_WORKBUF];
+    uchar       lines[SIZE_OF_LINE];
+    USER_BUFFER recv[10];
+    int         rtcInitDone;
+    time_bcd_t  tm;
+};
 
-typedef struct _common_cb		SYSTEMCB;
+typedef struct _common_cb SYSTEMCB;
 
-#endif	/* !defined(_cmnsys_h_) */
+#endif // !defined(_cmnsys_h_)

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#define	STACK_SIZE	8192
+#define	STACK_SIZE	7040
 #define	HEAP_SIZE	0
 #define	USTACK_SIZE	1024
 #define	RET_STRUCT_SIZE	0

@@ -22,32 +22,31 @@
  * SOFTWARE.
  */
 
-// -*-c++-*-
-// $RCSfile$
-// $Revision$
-// $Date$
-// 
-// Copyright (c) 2015 LandF Corporation.
-//
-// History:
-//
+/* -*-c++-*-
+ * $RCSfile$
+ * $Revision$
+ * $Date$
+ *
+ * Copyright (c) 2015 LandF Corporation.
+ *
+ * History:
+ */
 #if !defined(_rtc_h_)
-#define	_rtc_h_
+#define _rtc_h_
 
-/* **** Time data **** */
-typedef struct
-{
-    uint8_t     second;                 /* Second */
-    uint8_t     minute;                 /* Minute */
-    uint8_t     hour;                   /* Hour */
-    uint8_t     dayweek;                /* Day of the week */
-    uint8_t     day;                    /* Day */
-    uint8_t     month;                  /* Month */
-    uint16_t    year;                   /* Year */
+// **** Time data **** 
+typedef struct {
+    uint8_t     second;  // Second 
+    uint8_t     minute;  // Minute 
+    uint8_t     hour;    // Hour 
+    uint8_t     dayweek; // Day of the week 
+    uint8_t     day;     // Day 
+    uint8_t     month;   // Month 
+    uint16_t    year;    // Year 
 } time_bcd_t;
 
 extern void subclk_as_RTC(void);
 extern void rtc_init(time_bcd_t *);
 extern void rtc_time_read(time_bcd_t *);
 
-#endif	/* !defined(_rtc_h_) */
+#endif // !defined(_rtc_h_)

@@ -1,5 +1,5 @@
 ;segment   start     end       rom
-FIX_INTV /f $FFFFFF80, $FFFFFF80 ;固定割り込みベクター
+FIX_INTV /f $FFFFFF80, $FFFFFF80 ;Fixed Interrupt Vector
 main /i    $00000000          ,$FFF40000
 TEXT
 DATA_CONST          -$0001FFFF

@@ -22,77 +22,74 @@
  * SOFTWARE.
  */
 
-//________________________________________________________________________________________
-//
-//	RX63N	uSD用	RSPI1-I/F 通信
-//
-//----------------------------------------------------------------------------------------
-//	開発履歴
-//
-//	2016/02/10	コーディング開始（橘）
-//
-//----------------------------------------------------------------------------------------
-//	T.Tachibana
-//	㈱L&F
-//________________________________________________________________________________________
-//
-
-//#include "uSD_rspi1.h"
-
+/* ________________________________________________________________________________________
+ *
+ * RX63N For uSD RSPI1-I/F Communication
+ *
+ * ----------------------------------------------------------------------------------------
+ * Development history
+ *
+ * 2016/02/10 Start coding (by Tachibana)
+ *
+ * ----------------------------------------------------------------------------------------
+ * T.Tachibana
+ * L&F
+ * ________________________________________________________________________________________
+ */
 #ifndef __CAN2ECU_uSD_IF__
 #define __CAN2ECU_uSD_IF__
 
 /*
-	ポート設定
+ *  Port setting
+ *
+ *          Port        SCI        I2C        SPI        Apply
+ *  ----------------------------------------------------------------------------
+ *  RSPI1   PE7         MISOB                            <RSPI>  uSD
+ *          PE6         MOSIB                            <RSPI>  uSD
+ *          PE5         RSPCKB                           <RSPI>  uSD
+ *          PE4         SSLB0                            <RSPI>  uSD
+ */
 
-			Port		SCI			I2C			SPI			適用
-	----------------------------------------------------------------------------
-	RSPI1	PE7									MISOB		<RSPI>		uSD
-			PE6									MOSIB		<RSPI>		uSD
-			PE5									RSPCKB		<RSPI>		uSD
-			PE4									SSLB0		<RSPI>		uSD
-*/
+#define     RSPI1_ACTIVATE
 
-#define		RSPI1_ACTIVATE
+#ifdef      RSPI1_ACTIVATE
 
-#ifdef		RSPI1_ACTIVATE
+// RSPI management structure for uSD 
+typedef struct  __spi_module__ {
+    int   err;      // Error flag 
+    void *rx_proc;  // Call function at reception completion interrupt 
+    void *tx_proc;  // Call function at transmission completion interrupt 
+    void *ti_proc;  // Call function at idling interrupt 
+    void *err_proc; // Call function at error interrupt 
+}   SPI_MODULE;
 
-//	uSD用 RSPI管理構造体
-typedef struct	__spi_module__ {
-	int				err;				//	エラーフラグ
-	void			*rx_proc;			//	受信完了割り込み時呼び出し関数
-	void			*tx_proc;			//	送信完了割り込み時呼び出し関数
-	void			*ti_proc;			//	アイドリング割り込み時呼び出し関数
-	void			*err_proc;			//	エラー発生割り込み時呼び出し関数
-}	SPI_MODULE;
+extern SPI_MODULE usd_spi_com;
 
-extern	SPI_MODULE		usd_spi_com;
+//Indirect call prototype (1 argument) 
+typedef void (*USD_PROC_CALL)(void *);
 
-//間接呼び出しのプロトタイプ(引数１個)
-typedef	void 			(*USD_PROC_CALL)(void *);
+// Log function 
+void logging(char *fmt, ...);
 
-//	ログ機能
-void	logging(char *fmt, ...);
+/* ----------------------------------------------------------------------------------------
+ * rspi1_init
+ * 
+ *  Function description
+ *   RSPI1 initialization
+ *           Port        SCI        I2C        SPI        Apply
+ *   ----------------------------------------------------------------------------
+ *   RSPI1   PE7         MISOB                            <RSPI>  uSD
+ *           PE6         MOSIB                            <RSPI>  uSD
+ *           PE5         RSPCKB                           <RSPI>  uSD
+ *           PE4         SSLB0                            <RSPI>  uSD
+ *  
+ *  Argument
+ *      speed  Communication speed 100,000 to 10,000,000
+ * 
+ *  Return
+ *      None
+ * ----------------------------------------------------------------------------------------*/
+extern void rspi1_init(long bps);
 
-//________________________________________________________________________________________
-//
-//	rspi1_init
-//----------------------------------------------------------------------------------------
-//	機能説明
-//		RSPI1初期化
-//					Port		SCI			I2C			SPI			適用
-//			----------------------------------------------------------------------------
-//			RSPI1	PE7									MISOB		<RSPI>		uSD
-//					PE6									MOSIB		<RSPI>		uSD
-//					PE5									RSPCKB		<RSPI>		uSD
-//					PE4									SSLB0		<RSPI>		uSD
-//	引数
-//		speed		通信速度	100,000～10,000,000
-//	戻り
-//		無し
-//________________________________________________________________________________________
-//
-extern	void rspi1_init(long bps);
-
-#endif		/*RSPI1_ACTIVATE*/
-#endif		/*__CAN2ECU_uSD_IF__*/
+#endif // RSPI1_ACTIVATE
+#endif //__CAN2ECU_uSD_IF__
