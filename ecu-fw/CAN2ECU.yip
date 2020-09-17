@@ -1,4 +1,4 @@
-YellowIDE-Project 1 +++++++++++++++++
+YellowIDE-Project 1 ++++++++++++++++
 ecu.c
 '0 "0 "
 	altypes.h
@@ -96,9 +96,6 @@ can3_spi2.c
 	ecu.h
 	can3_spi2.h
 	cantp.h
-volatile_test.c
-'0 "0 "
-	iodefine.h
 obd2.c
 '0 "0 "
 	iodefine.h
