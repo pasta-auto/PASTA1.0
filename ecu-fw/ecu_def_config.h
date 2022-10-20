@@ -41,7 +41,104 @@
  * When the powertrain ECU receives the ID set to conflict, it changes the ID transmission / reception direction thereafter.
  * To the LCD, a mark is added after the frame data of the corresponding ID and passed.
  * --------------------------------------------------------------------------------------- */
-#define DS_X_POWERTRAIN_ID      0x043       // Engine RPM and speed 
+
+#define		VI_POWERTRAIN_RPM		17
+#define		VI_POWERTRAIN_SPEED		24
+#define		VI_POWERTRAIN_SWID		0x043
+
+//	CARLA sending ID
+const short	CARLA_CHASSIS_SEND_ID[] = {
+	0x01A,	//	brake
+	0x02F,	//	acceletor
+	0x058,	//	steeling
+	0x06D,	//	shift switch
+	0x083,	//	brinker
+	0x1A7,	//	head light
+	0x1B1,	//	pass
+	0x1C9,	//	side brake
+	0
+};
+const short	CARLA_POWERTRAIN_SEND_ID[] = {
+	0x024,	//	brake
+	0x039,	//	acceletor
+	0x043,	//	rpm
+	0x062,	//	power steeling
+	0x077,	//	shift position
+	0x16F,	//	speed
+	0x1D3,	//	side brake
+	0x198,	//	steering position
+	0
+};
+const short	CARLA_BODY_SEND_ID[] = {
+	0
+};
+const short	CARLA_PTBD_SEND_ID[] = {
+	0x024,	//	brake
+	0x039,	//	acceletor
+	0x043,	//	rpm
+	0x062,	//	power steeling
+	0x077,	//	shift position
+	0x16F,	//	speed
+	0x1D3,	//	side brake
+	0x198,	//	steering position
+	0x08D,	//	Blinker left and right lighting state
+	0x1BB,	//	position headlight high beam lighting state
+	0
+};
+
+
+//	CARLA sending ID
+const unsigned char	CARLA_CHASSIS_IO_ID[] = {
+	0,	//	brake
+	1,	//	acceletor
+	2,	//	steeling
+	3,	//	shift switch
+	4,	//	brinker switch
+	6,	//	head light
+	7,	//	pass
+	9,	//	side brake
+	0xFF
+};
+const unsigned char	CARLA_POWERTRAIN_IO_ID[] = {
+	15,	//	brake
+	16,	//	acceletor
+	17,	//	rpm
+	18,	//	power steeling
+	19,	//	shift position
+	24,	//	speed
+	28,	//	steering position
+	32,	//	side brake
+	0xFF
+};
+const unsigned char	CARLA_BODY_IO_ID[] = {
+	0xFF
+};
+const unsigned char	CARLA_PTBD_IO_ID[] = {
+	15,	//	brake
+	16,	//	acceletor
+	17,	//	rpm
+	18,	//	power steeling
+	19,	//	shift position
+	24,	//	speed
+	28,	//	steering position
+	32,	//	side brake
+	42,	//	Blinker left and right lighting state
+	45,	//	position headlight high beam lighting state
+	0xFF
+};
+
+const short	VI_CHASSIS_SEND_ID[] = {
+	0x01A,	//	brake
+	0x02F,	//	acceletor
+	0x058,	//	steeling
+	0x06D,	//	shift switch
+	0
+};
+const short	VI_POWERTRAIN_SEND_ID[] = {
+	0x043,	//	rpm
+	0x16F,	//	speed
+	0
+};
 
 /* ---------------------------------------------------------------------------------------
  * CGW CAN-ID mode
@@ -163,11 +260,11 @@ void defset_rootmap(void)
         cgw_rootmap(0x150, PT_TO_CS); //P Brake wear warning / ice burn warning 
         cgw_rootmap(0x15A, PT_TO_CS); //P Anti-lock brake operation 
         cgw_rootmap(0x164, PT_TO_CS); //P Brake pad temperature and tire temperature 
-        cgw_rootmap(0x16F, PT_TO_CS); //P Throttle adjustment 
+        cgw_rootmap(0x16F, PT_TO_CS); //P Speed
         cgw_rootmap(0x179, PT_TO_CS); //P Fuel consumption rate and mixture ratio 
         cgw_rootmap(0x183, PT_TO_CS); //P Engine cooling water temperature 
         cgw_rootmap(0x18D, PT_TO_CS); //P Engine failure 
-        cgw_rootmap(0x198, PT_TO_CS); //P Power steering failure 
+        cgw_rootmap(0x198, PT_TO_CS); //P Steering position
         cgw_rootmap(0x19A, PT_TO_CS); //P Engine starter drive 
         cgw_rootmap(0x1A2, PT_TO_CS); //P Activate skid prevention 
         cgw_rootmap(0x1AD, PT_TO_CS); //P Mission failure 
@@ -208,7 +305,7 @@ void defset_rootmap(void)
         cgw_rootmap(0x2A6, BD_TO_CS); //B Right door / window position / limit switch status 
         cgw_rootmap(0x2BB, BD_TO_CS); //B Left door / window position / limit switch status 
         cgw_rootmap(0x3E9, BD_TO_CS); //B Turn signal ball out alarm 
-        cgw_rootmap(0x3F4, BD_TO_CS); //B Horn breakdown 
+        cgw_rootmap(0x3F4, BD_TO_CS); //B Blind spot monitor 
         cgw_rootmap(0x3FF, BD_TO_CS); //B Position / Headlight / High beam burnout / Bulb control failure 
         cgw_rootmap(0x40A, BD_TO_CS); //B Front wiper / intermittent / LOW / HIGH / washer motor / pump failure 
         cgw_rootmap(0x415, BD_TO_CS); //B Rear wiper / washer motor / pump failure 
@@ -239,6 +336,10 @@ void defset_rootmap(void)
         cgw_rootmap(0x7EC + ECU_UNIT_BODY,       BD_TO_EX);
 #endif // if (CGW_ALL_ID_PASS==0)
     } else { // ECU sets transmission and reception individually 
+    	for(i = 0x7D0; i < 0x7DF; i++)
+    	{
+	        rout_map.ID[i].BYTE       = CH_MAP_RECV | CH_MAP_SEND;	// CARLA Broadcast ID received by all ECUs 
+	    }
         rout_map.ID[0x7DF].BYTE                     = CH_MAP_RECV;  // Broadcast ID received by all ECUs 
         rout_map.ID[(0x7E0 + SELECT_ECU_UNIT)].BYTE = CH_MAP_RECV;  // TP reception ID of individual ECU 
         rout_map.ID[(0x7E8 + SELECT_ECU_UNIT)].BYTE = CH_MAP_SEND;  // TP transmission ID of individual ECU 
@@ -295,14 +396,14 @@ void defset_confecu(void)
         add_cyceve_list(0, 0x16F, 8, 1, 1, 50, 9); //P Throttle adjustment 
         add_cyceve_list(0, 0x183, 8, 1, 1, 50,11); //P Engine coolant temperature 
         add_cyceve_list(0, 0x18D, 8, 1, 1, 50,12); //P Engine failure 
-        add_cyceve_list(0, 0x198, 8, 1, 1, 50,13); //P Power steering failure 
+        add_cyceve_list(0, 0x198, 8, 1, 1, 50,13); //P Steering position
         add_cyceve_list(0, 0x19A, 8, 1, 1, 50,14); //P Engine starter drive 
         add_cyceve_list(0, 0x1D3, 8, 1, 1, 50,17); //P Side brake operation status 
         add_cyceve_list(0, 0x3BD, 8, 1, 1,500,21); //P Engine oil 
         add_cyceve_list(0, 0x3D4, 8, 1, 1,500,23); //P Engine starter failure 
         add_cyceve_list(0, 0x3DE, 8, 1, 1,500,24); //P Battery alarm 
         add_cyceve_list(0, 0x482, 8, 1, 1,500,26); //P Eco-drive judgment 
-    } else if (SELECT_ECU_UNIT == ECU_UNIT_CHASSIS) {
+   } else if (SELECT_ECU_UNIT == ECU_UNIT_CHASSIS) {
         add_cyceve_list(0, 0x01A, 8, 1, 1, 20, 0); //C Brake operation amount 
         add_cyceve_list(0, 0x02F, 8, 1, 1, 20, 1); //C A operation amount 
         add_cyceve_list(0, 0x058, 8, 1, 1, 20, 2); //C Handle operation position 
@@ -333,6 +434,39 @@ void defset_confecu(void)
         add_cyceve_list(0, 0x461, 8, 1, 1,500,19); //B Seat belt alarm 
         add_cyceve_list(0, 0x46C, 8, 1, 1,500,20); //B Bonnet open/close switch 
         add_cyceve_list(0, 0x477, 8, 1, 1,500,21); //B Trunk open/close switch 
+    } else if (SELECT_ECU_UNIT == ECU_UNIT_PTBD) {
+        add_cyceve_list(0, 0x024, 8, 1, 1, 20, 0); //P Brake output 
+        add_cyceve_list(0, 0x039, 8, 1, 1, 20, 1); //P Throttle position 
+        add_cyceve_list(0, 0x043, 8, 1, 1, 20, 2); //P Engine RPM and speed 
+        add_cyceve_list(0, 0x062, 8, 1, 1, 20, 3); //P Power steering output 
+        add_cyceve_list(0, 0x077, 8, 1, 1, 20, 4); //P Shift position 
+        add_cyceve_list(0, 0x146, 8, 1, 1, 50, 5); //P Brake oil level 
+        add_cyceve_list(0, 0x15A, 8, 1, 1, 50, 7); //P Anti-lock brake operation 
+        add_cyceve_list(0, 0x16F, 8, 1, 1, 50, 9); //P Throttle adjustment 
+        add_cyceve_list(0, 0x183, 8, 1, 1, 50,11); //P Engine coolant temperature 
+        add_cyceve_list(0, 0x18D, 8, 1, 1, 50,12); //P Engine failure 
+        add_cyceve_list(0, 0x198, 8, 1, 1, 50,13); //P Steering position
+        add_cyceve_list(0, 0x19A, 8, 1, 1, 50,14); //P Engine starter drive 
+        add_cyceve_list(0, 0x1D3, 8, 1, 1, 50,17); //P Side brake operation status 
+        add_cyceve_list(0, 0x3BD, 8, 1, 1,500,21); //P Engine oil 
+        add_cyceve_list(0, 0x3D4, 8, 1, 1,500,23); //P Engine starter failure 
+        add_cyceve_list(0, 0x3DE, 8, 1, 1,500,24); //P Battery alarm 
+        add_cyceve_list(0, 0x482, 8, 1, 1,500,26); //P Eco-drive judgment 
+        add_cyceve_list(0, 0x08D, 8, 1, 1, 20, 0); //B Blinker left and right lighting state 
+        add_cyceve_list(0, 0x0A2, 8, 1, 1, 20, 1); //B Horn sound 
+        add_cyceve_list(0, 0x0B4, 8, 1, 1, 20, 2); //B Airbag activation switch 
+        add_cyceve_list(0, 0x1BB, 8, 1, 1, 50, 3); //B Position, headlight and high beam lighting state 
+        add_cyceve_list(0, 0x266, 8, 1, 1,100, 4); //B Front wiper / intermittent / LOW / HIGH / washer operating state 
+        add_cyceve_list(0, 0x27B, 8, 1, 1,100, 5); //B Rear wiper/washer operating state 
+        add_cyceve_list(0, 0x290, 8, 1, 1,100, 6); //B Door open / closed / locked state 
+        add_cyceve_list(0, 0x2A6, 8, 1, 1,100, 7); //B Right door/window position / limit switch status 
+        add_cyceve_list(0, 0x2BB, 8, 1, 1,100, 8); //B Left door/window position / limit switch status 
+        add_cyceve_list(0, 0x420, 8, 1, 1,500,14); //B Door lock drive failure 
+        add_cyceve_list(0, 0x457, 8, 1, 1,500,18); //B Seat belt sensor 
+        add_cyceve_list(0, 0x461, 8, 1, 1,500,19); //B Seat belt alarm 
+        add_cyceve_list(0, 0x46C, 8, 1, 1,500,20); //B Bonnet open/close switch 
+        add_cyceve_list(0, 0x477, 8, 1, 1,500,21); //B Trunk open/close switch 
+
     } else if(SELECT_ECU_UNIT == ECU_UNIT_CGW) {
         // add_cyceve_list(0, 0x7FD, 8, 1, 1, 1000, 0); //C Notify every second
     }
@@ -442,12 +576,21 @@ void defset_extlist_ex(void)
      *  unsigned char *pat Pattern data                 [0]=do not use
      */
     if (SELECT_ECU_UNIT == ECU_UNIT_POWERTRAIN) {           // Powertrain outputs only information from chassis 
-        add_extern_io(0x01A, 6, 0, 0, 0, 0, 0, 1, 0); //C Brake operation amount 
-        add_extern_io(0x02F, 6, 0, 0, 0, 0, 1, 1, 0); //C accelerator operation amount 
-        add_extern_io(0x058, 6, 0, 0, 0, 0, 2, 1, 0); //C handle operation position 
-        add_extern_io(0x06D, 5, 0, 0, 0, 0, 3, 1, 0); //C shift position switch 
-        add_extern_io(0x1B8, 5, 0, 0, 0, 0, 8, 1, 0); //C engine start button 
-        add_extern_io(0x1C9, 5, 0, 0, 0, 0, 9, 1, 0); //C side brake 
+		add_extern_io(0x01A, 6, 0, 0, 0, 0, 0, 1, 0); //C Brake operation amount 
+		add_extern_io(0x02F, 6, 0, 0, 0, 0, 1, 1, 0); //C accelerator operation amount 
+		add_extern_io(0x058, 6, 0, 0, 0, 0, 2, 1, 0); //C handle operation position 
+		add_extern_io(0x06D, 5, 0, 0, 0, 0, 3, 1, 0); //C shift position switch 
+		add_extern_io(0x083, 5, 0, 0, 0, 0, 4, 1, 0); //C blinker left / right / hazard switch 
+	//	add_extern_io(0x098, 5, 0, 0, 0, 0, 5, 1, 0); //C horn switch 
+		add_extern_io(0x1A7, 5, 0, 0, 0, 0, 6, 1, 0); //C position headlight high beam switch 
+		add_extern_io(0x1B1, 5, 0, 0, 0, 0, 7, 1, 0); //C passing switch 
+		add_extern_io(0x1B8, 5, 0, 0, 0, 0, 8, 1, 0); //C engine start button 
+		add_extern_io(0x1C9, 5, 0, 0, 0, 0, 9, 1, 0); //C side brake 
+	//	add_extern_io(0x25C, 6, 0, 0, 0, 0,10, 1, 0); //C front wiper / intermittent / LOW / HIGH / washer switch / intermittent timer 
+	//	add_extern_io(0x271, 5, 0, 0, 0, 0,11, 1, 0); //C Rear wiper / washer switch 
+	//	add_extern_io(0x286, 5, 0, 0, 0, 0,12, 1, 0); //C Door lock switch / unlock switch 
+	//	add_extern_io(0x29C, 5, 0, 0, 0, 0,13, 1, 0); //C Right door / window lift switch 
+	//	add_extern_io(0x2B1, 5, 0, 0, 0, 0,14, 1, 0); //C Left door window up / down switch 
         // Powertrain input information 
         add_extern_io(0x024, 2, 0, 0, 0, 0,15, 1, 0); //P Brake output 
         add_extern_io(0x039, 2, 0, 0, 0, 0,16, 1, 0); //P throttle position 
@@ -456,16 +599,27 @@ void defset_extlist_ex(void)
         add_extern_io(0x077, 1, 0, 0, 0, 0,19, 1, 0); //P shift position 
         add_extern_io(0x146, 1, 0, 0, 0, 0,20, 1, 0); //P Brake oil amount 
         add_extern_io(0x15A, 1, 0, 0, 0, 0,22, 1, 0); //P Anti-lock brake operation 
-        add_extern_io(0x16F, 2, 0, 0, 0, 0,24, 1, 0); //P Throttle adjustment 
+        add_extern_io(0x16F, 2, 0, 0, 0, 0,24, 1, 0); //P Speed
         add_extern_io(0x183, 1, 0, 0, 0, 0,26, 1, 0); //P Engine coolant temperature 
         add_extern_io(0x18D, 1, 0, 0, 0, 0,27, 1, 0); //P engine failure 
-        add_extern_io(0x198, 1, 0, 0, 0, 0,28, 1, 0); //P Power steering failure 
+        add_extern_io(0x198, 2, 0, 0, 0, 0,28, 1, 0); //P Steering position
         add_extern_io(0x19A, 1, 0, 0, 0, 0,29, 1, 0); //P Engine starter drive 
         add_extern_io(0x1D3, 1, 0, 0, 0, 0,32, 1, 0); //P side brake operation status 
         add_extern_io(0x3BD, 1, 0, 0, 0, 0,36, 1, 0); //P engine oil amount 
         add_extern_io(0x3D4, 1, 0, 0, 0, 0,38, 1, 0); //P fuel remaining 
         add_extern_io(0x3DE, 1, 0, 0, 0, 0,39, 1, 0); //P Battery alarm 
         add_extern_io(0x482, 1, 0, 0, 0, 0,41, 1, 0); //P Eco-drive judgment 
+        // Output of body information 
+	//	add_extern_io(0x08D, 5, 0, 0, 0, 0,42, 1, 0); //B Blinker left and right lighting state 
+	//	add_extern_io(0x0A2, 5, 0, 0, 0, 0,43, 1, 0); //B horn sound 
+	//	add_extern_io(0x0B4, 5, 0, 0, 0, 0,44, 1, 0); //B airbag activation switch 
+	//	add_extern_io(0x1BB, 5, 0, 0, 0, 0,45, 1, 0); //B position headlight high beam lighting state 
+	//	add_extern_io(0x266, 6, 0, 0, 0, 0,46, 1, 0); //B Front wiper / Intermittent / LOW / HIGH / Washer operation status / Intermittent timer 
+	//	add_extern_io(0x27B, 5, 0, 0, 0, 0,47, 1, 0); //B Rear wiper / washer operating state 
+	//	add_extern_io(0x290, 5, 0, 0, 0, 0,48, 1, 0); //B Door open / closed / locked state 
+	//	add_extern_io(0x461, 5, 0, 0, 0, 0,61, 1, 0); //B seat belt alarm 
+	//	add_extern_io(0x46C, 5, 0, 0, 0, 0,62, 1, 0); //B Bonnet open / close switch 
+	//	add_extern_io(0x477, 5, 0, 0, 0, 0,63, 1, 0); //B Trunk open / close switch 
     } else if (SELECT_ECU_UNIT == ECU_UNIT_CHASSIS) {       //  Chassis input 
         add_extern_io(0x01A, 2, 0, 0, 0, 0, 0, 1, 0); //C Brake operation amount 
         add_extern_io(0x02F, 2, 0, 0, 0, 0, 1, 1, 0); //C accelerator operation amount 
@@ -484,12 +638,17 @@ void defset_extlist_ex(void)
         add_extern_io(0x2B1, 1, 0, 0, 0, 0,14, 1, 0); //C left door / window up / down switch 
         /* Chassis outputs all information for transfer to instrument panel
          * Output of powertrain information*/
+        add_extern_io(0x024, 6, 0, 0, 0, 0,15, 1, 0); //P Brake output 
+        add_extern_io(0x039, 6, 0, 0, 0, 0,16, 1, 0); //P throttle position 
         add_extern_io(0x043, 7, 0, 0, 0, 0,17, 1, 0); //P engine RPM / speed 
         add_extern_io(0x062, 7, 0, 0, 0, 0,18, 1, 0); //P Power steering output / torque 
         add_extern_io(0x077, 5, 0, 0, 0, 0,19, 1, 0); //P shift position 
         add_extern_io(0x146, 5, 0, 0, 0, 0,20, 1, 0); //P Brake oil amount 
+        add_extern_io(0x15A, 5, 0, 0, 0, 0,22, 1, 0); //P Anti-lock brake operation 
+        add_extern_io(0x16F, 6, 0, 0, 0, 0,24, 1, 0); //P Speed
         add_extern_io(0x183, 5, 0, 0, 0, 0,26, 1, 0); //P Engine coolant temperature 
         add_extern_io(0x18D, 5, 0, 0, 0, 0,27, 1, 0); //P engine failure 
+        add_extern_io(0x198, 6, 0, 0, 0, 0,28, 1, 0); //P Steering position
         add_extern_io(0x19A, 5, 0, 0, 0, 0,29, 1, 0); //P Engine starter drive 
         add_extern_io(0x1D3, 5, 0, 0, 0, 0,32, 1, 0); //P side brake operation status 
         add_extern_io(0x3BD, 5, 0, 0, 0, 0,36, 1, 0); //P engine oil 
@@ -518,6 +677,55 @@ void defset_extlist_ex(void)
         add_extern_io(0x286, 5, 0, 0, 0, 0,12, 1, 0); //C Door lock switch / unlock switch 
         add_extern_io(0x29C, 5, 0, 0, 0, 0,13, 1, 0); //C Right door / window lift switch 
         add_extern_io(0x2B1, 5, 0, 0, 0, 0,14, 1, 0); //C Left door window up / down switch 
+        // Body input 
+        add_extern_io(0x08D, 1, 0, 0, 0, 0,42, 1, 0); //B Blinker left and right lighting state 
+        add_extern_io(0x0A2, 1, 0, 0, 0, 0,43, 1, 0); //B horn sound 
+        add_extern_io(0x0B4, 1, 0, 0, 0, 0,44, 1, 0); //B airbag activation switch 
+        add_extern_io(0x1BB, 1, 0, 0, 0, 0,45, 1, 0); //B position headlight high beam lighting state 
+        add_extern_io(0x266, 2, 0, 0, 0, 0,46, 1, 0); //B front wiper / intermittent / LOW / HIGH / washer operation status / intermittent timer 
+        add_extern_io(0x27B, 1, 0, 0, 0, 0,47, 1, 0); //B Rear wiper / washer operating state 
+        add_extern_io(0x290, 1, 0, 0, 0, 0,48, 1, 0); //B Door open / closed / locked state 
+        add_extern_io(0x2A6, 2, 0, 0, 0, 0,49, 1, 0); //B Right door / window position / limit switch status 
+        add_extern_io(0x2BB, 2, 0, 0, 0, 0,50, 1, 0); //B left door / window position / limit switch status 
+        add_extern_io(0x420, 1, 0, 0, 0, 0,56, 1, 0); //B door lock drive failure 
+        add_extern_io(0x457, 1, 0, 0, 0, 0,60, 1, 0); //B Seat belt sensor 
+        add_extern_io(0x461, 1, 0, 0, 0, 0,61, 1, 0); //B seat belt alarm 
+        add_extern_io(0x46C, 1, 0, 0, 0, 0,62, 1, 0); //B Bonnet open / close switch 
+        add_extern_io(0x477, 1, 0, 0, 0, 0,63, 1, 0); //B Trunk open / close switch 
+    } else if (SELECT_ECU_UNIT == ECU_UNIT_PTBD) {          //  Powertrain & body outputs only information from the chassis 
+        add_extern_io(0x01A, 6, 0, 0, 0, 0, 0, 1, 0); //C Brake operation amount 
+        add_extern_io(0x02F, 6, 0, 0, 0, 0, 1, 1, 0); //C accelerator operation amount 
+        add_extern_io(0x058, 6, 0, 0, 0, 0, 2, 1, 0); //C handle operation position 
+        add_extern_io(0x06D, 5, 0, 0, 0, 0, 3, 1, 0); //C shift position switch 
+        add_extern_io(0x083, 5, 0, 0, 0, 0, 4, 1, 0); //C blinker left / right / hazard switch 
+        add_extern_io(0x098, 5, 0, 0, 0, 0, 5, 1, 0); //C horn switch 
+        add_extern_io(0x1A7, 5, 0, 0, 0, 0, 6, 1, 0); //C position headlight high beam switch 
+        add_extern_io(0x1B1, 5, 0, 0, 0, 0, 7, 1, 0); //C passing switch 
+        add_extern_io(0x1B8, 5, 0, 0, 0, 0, 8, 1, 0); //C engine start button 
+        add_extern_io(0x1C9, 5, 0, 0, 0, 0, 9, 1, 0); //C side brake 
+        add_extern_io(0x25C, 6, 0, 0, 0, 0,10, 1, 0); //C front wiper / intermittent / LOW / HIGH / washer switch / intermittent timer 
+        add_extern_io(0x271, 5, 0, 0, 0, 0,11, 1, 0); //C Rear wiper / washer switch 
+        add_extern_io(0x286, 5, 0, 0, 0, 0,12, 1, 0); //C Door lock switch / unlock switch 
+        add_extern_io(0x29C, 5, 0, 0, 0, 0,13, 1, 0); //C Right door / window lift switch 
+        add_extern_io(0x2B1, 5, 0, 0, 0, 0,14, 1, 0); //C Left door window up / down switch 
+        // Powertrain input information 
+        add_extern_io(0x024, 2, 0, 0, 0, 0,15, 1, 0); //P Brake output 
+        add_extern_io(0x039, 2, 0, 0, 0, 0,16, 1, 0); //P throttle position 
+        add_extern_io(0x043, 3, 0, 0, 0, 0,17, 1, 0); //P Engine RPM / speed 
+        add_extern_io(0x062, 3, 0, 0, 0, 0,18, 1, 0); //P Power steering output / torque 
+        add_extern_io(0x077, 1, 0, 0, 0, 0,19, 1, 0); //P shift position 
+        add_extern_io(0x146, 1, 0, 0, 0, 0,20, 1, 0); //P Brake oil amount 
+        add_extern_io(0x15A, 1, 0, 0, 0, 0,22, 1, 0); //P Anti-lock brake operation 
+        add_extern_io(0x16F, 2, 0, 0, 0, 0,24, 1, 0); //P Speed
+        add_extern_io(0x183, 1, 0, 0, 0, 0,26, 1, 0); //P Engine coolant temperature 
+        add_extern_io(0x18D, 1, 0, 0, 0, 0,27, 1, 0); //P engine failure 
+        add_extern_io(0x198, 2, 0, 0, 0, 0,28, 1, 0); //P Steering position
+        add_extern_io(0x19A, 1, 0, 0, 0, 0,29, 1, 0); //P Engine starter drive 
+        add_extern_io(0x1D3, 1, 0, 0, 0, 0,32, 1, 0); //P side brake operation status 
+        add_extern_io(0x3BD, 1, 0, 0, 0, 0,36, 1, 0); //P engine oil amount 
+        add_extern_io(0x3D4, 1, 0, 0, 0, 0,38, 1, 0); //P fuel remaining 
+        add_extern_io(0x3DE, 1, 0, 0, 0, 0,39, 1, 0); //P Battery alarm 
+        add_extern_io(0x482, 1, 0, 0, 0, 0,41, 1, 0); //P Eco-drive judgment 
         // Body input 
         add_extern_io(0x08D, 1, 0, 0, 0, 0,42, 1, 0); //B Blinker left and right lighting state 
         add_extern_io(0x0A2, 1, 0, 0, 0, 0,43, 1, 0); //B horn sound 

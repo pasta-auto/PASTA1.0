@@ -314,7 +314,7 @@ int uds_sid_3e(unsigned char *req, int sz, unsigned char *res, int *len)
  * ---------------------------------------------------------------------------------------- */
 extern const char def_ecu_corp[]; // 16] = "PASTA"; 
 extern const char def_ecu_name[]; // 16] = "CAN2ECU"; 
-extern const char def_ecu_vars[]; // 16] = "Ver1.3.0"; 
+extern const char def_ecu_vars[]; // 16] = "Ver?.?.?"; 
 extern const char def_ecu_date[]; // 16] = __DATE__; 
 extern const char def_ecu_time[]; // 16] = __TIME__; 
 int uds_sid_22(unsigned char *req, int sz, unsigned char *res, int *len)

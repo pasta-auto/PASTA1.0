@@ -80,8 +80,8 @@ int console_port = 0;
 #endif
 
 const char  def_ecu_corp[16]    = "PASTA";
-const char  def_ecu_name[16]    = "CAN2ECU";
-const char  def_ecu_vars[16]    = "Ver2.4.1";
+const char  def_ecu_name[16]    = "ECU1S";
+const char  def_ecu_vars[16]    = "Ver2.5";
 const char  def_ecu_date[16]    = __DATE__;
 const char  def_ecu_time[16]    = __TIME__;
 
@@ -99,6 +99,7 @@ void    ecu_status(char *cmd);       // Parameter status check
 void    ecu_get_command(char *cmd);  // Frame data acquisition 
 void    ecu_set_command(char *cmd);  // Rewrite frame data 
 void    ecu_put_command(char *cmd);  // Direct frame transmission 
+void    ecu_put_message(int id, int size, unsigned char *buf);
 void    ecu_input_update(char *cmd); // Update I/O information via communication 
 
 /* ----------------------------------------------------------------------------------------
@@ -228,10 +229,7 @@ unsigned long byte_to_ulong(unsigned char *data, int index, int size)
 void send_var(int ch)
 {
     char s[256];
-    sprintf(
-                s, "%s %s %s %s\r", def_ecu_name, def_ecu_vars, def_ecu_date,
-                def_ecu_time
-    );
+	sprintf(s, "VER %s %s %s %s\r", def_ecu_name, def_ecu_vars, def_ecu_date, def_ecu_time);
     sci_puts(ch, s);
 }
 
@@ -526,27 +524,53 @@ void command_job(char *cmd)
                     }
                 }
             }
-        } else if (
-            cmd[0] == 'O' &&
-            cmd[1] == 'N'
-        ) { /* MON command (obtains the time difference
-             * between the reception of the specified ID and
-             * the completion of transmission)*/
-            cmd += 2;
-            while (*cmd == ' ') {
-                cmd++;
-            }
-            db[0] = sscanf(cmd, "%x %x %d", &id, &dt, &db[1]);
-            if (db[0] >= 2) { // Set value acquisition 
-                cmt1_stop();
-                led_monit_id        = id;     // Test ID 
-                led_monit_ch        = dt;     // Test channel 
-                led_monit_first     = 0x7FFFFFFF; // Shortest time 
-                led_monit_slow      = 0;      // Longest time 
-                led_monit_time      = 0;      // Average time 
-                led_monit_count     = 0;      // Averaging time 
-                led_monit_sample    = (db[0] == 3) ? db[1] : 50;
-            }
+        } else if (cmd[0] == 'O') {
+        	if (cmd[1] == 'N') { /* MON command (obtains the time difference
+	             * between the reception of the specified ID and
+	             * the completion of transmission)*/
+	            cmd += 2;
+	            while (*cmd == ' ') {
+	                cmd++;
+	            }
+	            db[0] = sscanf(cmd, "%x %x %d", &id, &dt, &db[1]);
+	            if (db[0] >= 2) { // Set value acquisition 
+	                cmt1_stop();
+	                led_monit_id        = id;     // Test ID 
+	                led_monit_ch        = dt;     // Test channel 
+	                led_monit_first     = 0x7FFFFFFF; // Shortest time 
+	                led_monit_slow      = 0;      // Longest time 
+	                led_monit_time      = 0;      // Average time 
+	                led_monit_count     = 0;      // Averaging time 
+	                led_monit_sample    = (db[0] == 3) ? db[1] : 50;
+	            }
+	        } else if (cmd[1] == 'D') { /* MOD command */
+	            cmd += 2;
+	            while (*cmd == ' ') {
+	                cmd++;
+	            }
+	            dt = sscanf(cmd, "%d %d", &db[2], &db[0]);
+	            if (dt >= 1) { // Set value acquisition
+	            	switch(db[2]) {
+	            	case 0:
+	            	case 1:
+			            if(dt <= 1) db[0] = 0x00;
+		            	id = 0x7D0;
+		            	db[1] = ~db[0] & 0xFF;
+			           	logging("MOD%d\r", db[2]);
+			           	ds_conect_active[1] = db[2];
+			         	ds_conect_active[0] = (~db[2]) & 1;
+			         	{
+			         		unsigned char s[8];
+			         		memset(s, 0xff, sizeof(s));
+			         		s[0] = (unsigned char)db[0];
+			         		s[1] = (unsigned char)db[1];
+			         		s[2] = (unsigned char)db[2];
+			            	ecu_put_message(id, 8, s);	//	CAN
+			            }
+	            		break;
+	            	}
+	            }
+	        }
         }
         break;
     case 'E': // ECU command 
@@ -676,6 +700,12 @@ void command_job(char *cmd)
                 logging("WDF NG %d\r", id);
             }
         }
+        break;
+	case 'V':
+		if(cmd[0] == 'E' && cmd[1] == 'R')
+		{	//	[VER]
+			send_var(retport);
+		}
         break;
     default:
         logging("Command Error !\r");

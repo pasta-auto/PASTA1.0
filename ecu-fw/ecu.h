@@ -63,6 +63,7 @@
 #define ECU_UNIT_POWERTRAIN 0
 #define ECU_UNIT_CHASSIS 1
 #define ECU_UNIT_BODY 2
+#define ECU_UNIT_PTBD 3
 #define ECU_UNIT_CGW 7
 #endif // ifdef __LFY_RX63N__
 
@@ -324,6 +325,7 @@ extern CYCLE_EVENTS conf_ecu; /* Period/event/remote management definition
 // ECU I/O checklist 32*64=2048byte 
 extern EXTERNUL_IO  ext_list[ECU_EXT_MAX];
 extern int          ext_list_count; // Number of registered external I/O processes 
+extern short        ds_conect_active[2]; //	DS Connection flag
 
 /* Variable on RAM
  * Time-up waiting buffer*/
@@ -370,6 +372,28 @@ extern int              led_monit_sample; // Number of samples
     0x00100800 // Period/Event 2048byte   0x00100800 to 0x00100FFF 
 #define ADDRESS_OF_IOLIST \
     0x00101000 // I/O check     272byte   0x00101000 to 0x001017FF 
+
+/* ---------------------------------------------------------------------------------------
+ * CARLA mode selection setting 2021/02/22
+ * --------------------------------------------------------------------------------------- */
+#define		ECU_OPMODE_0		0		/*	PASTA.C -> RS232C -> ECU.C -> CAN.BUS -> ECU.P.B -> RS232C -> PASTA.P.B	*/
+#define		ECU_OPMODE_1		1		/*	PASTA.C -> RS232C -> ECU.C -> CAN.BUS -> CARLA.P.B						*/
+#define		ECU_OPMODE_2		2		/*	CARLA.C -> CAN.BUS -> CARLA.P.B											*/
+#define		ECU_OPMODE_3		3		/*	PASTA.C -> RS232C -> ECU.C -> CAN.BUS -> ECU.P.B -> RS232C -> CARLA.P.B	*/
+#define		ECU_OPMODE_4		4		/*	CARLA.C -> RS232C -> ECU.C -> CAN.BUS -> ECU.P.B -> RS232C -> CARLA.P.B	*/
+#define		ECU_OPMODE_5		5		/*	Vi Mode Phase1 DS mode	*/
+#define		ECU_OPMODE_6		6		/*	Vi Mode Phase1 DS mode	*/
+
+typedef	struct	__ecu_opemode_str__
+{
+	int		mode;				//	operaion code
+	int		mode_bk;			//	operaion code
+	char	chgio[EX_IO_MAX];	//	mode chainged I/O list nomber (0..63 or -1)
+	short	chgid[EX_IO_MAX];	//	mode chainged CAN-ID (0x000..0x7CF or -1)
+}	ECU_OPE_MODE_STR;
+
+//	CARLA operaion mode
+extern	ECU_OPE_MODE_STR	ecu_opmode;
 
 /* ---------------------------------------------------------------------------------------
  * search_target_id

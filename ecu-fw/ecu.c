@@ -39,6 +39,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sysio.h>
+#include <fmath.h>
 #include "altypes.h"
 #include "iodefine.h"
 #include "timer.h"
@@ -106,6 +107,11 @@ extern const can_st_ptr CAN_CHANNELS[];
 EXT_IO_STATUS exiosts;
 unsigned char exio_chg[EX_IO_MAX];
 int           exio_chg_mark;
+char		  exio_bridge[EX_IO_MAX];
+// Automatic brake control
+int aebs_active = 0;
+int	aebs_uptimer = 0;
+
 // CAN-ID -> EX-I/O-ID conversion table 
 unsigned char can_to_exio[CAN_ID_MAX]; // The data indicated by the CAN-ID is the external I/O management number. 00-3F=Applicable, FF=Not supported 
 
@@ -118,8 +124,11 @@ int stat_comm = 1;       // Communication port number 0 to 6 to notify LCD
 #else
 int stat_comm = 0;       // Communication port number 0 to 6 to notify LCD 
 #endif
-int ds_xross_pt_index   = -1; // DS conflict I/O list number retention 
 int ds_x_lost_counter   = 0;  // Driving simulator competition end detection counter 
+
+//	DS operaion mode
+ECU_OPE_MODE_STR	ecu_opmode;
+short	ds_conect_active[2] = {-1, -1};	// DS Connection flag
 
 RX_MB_BUF rxmb_buf[3]; // Receive sub-buffer 
 
@@ -597,7 +606,8 @@ extern int retport;
 int can_recv_frame(int ch, CAN_MBOX *mbox)
 {
     int           ret = 0; // Return value 
-    int           i;
+    int			  ret2nd = 0;
+    int           i, j, k, u, a;
     int           id;    // Get ID 
     int           dlc;   // Number of data bytes 
     CAN_DATA_BYTE data;  // Data buffer 
@@ -605,6 +615,7 @@ int can_recv_frame(int ch, CAN_MBOX *mbox)
     unsigned char txmsk; // Channel transmission mask 
     unsigned char cgw;   // Transfer flag 
     unsigned char c1, c2, c3; // Counter 
+    static	 char s[16];
 
     id = mbox->ID.BIT.SID;
 
@@ -613,91 +624,372 @@ int can_recv_frame(int ch, CAN_MBOX *mbox)
     txmsk = 0x01 << ch;       // Transmission channel bit 
     cgw   = rout_map.ID[id].BYTE; // Transfer MAP bit 
 
-    if (mbox->ID.BIT.RTR == 0) { // Data frame 
-        if ((cgw & rxmsk) == 0 && (cgw & txmsk) != 0) { // Transmit only is rejected 
+    if (mbox->ID.BIT.RTR == 0)
+    { // Data frame 
+        if ((cgw & rxmsk) == 0 && (cgw & txmsk) != 0)
+        { // Transmit only is rejected 
             return 0;
         }
-        for (i = 0; i < dlc; i++) {
+        for (i = 0; i < dlc; i++)
+        {
             data.BYTE[i] = mbox->DATA[i];
         }
-        for (; i < 8; i++) {
+        for (; i < 8; i++)
+        {
             data.BYTE[i] = 0; //can_buf.ID[id].BYTE[i]; 
         }
         /* ---------------------------------
          * Driving simulator competition processing
          *---------------------------------*/
-        if (id == DS_X_POWERTRAIN_ID) { // Receive drive simulator conflict ID 
-            if (SELECT_ECU_UNIT == ECU_UNIT_POWERTRAIN) { // Only power trains are processed 
-                if (ds_xross_pt_index >= 0) { // Detect 
-                    if (ext_list[ds_xross_pt_index].PORT.BIT.MODE < 4) { // ECU external input -> Apply in CAN output mode 
-                        ext_list[ds_xross_pt_index].PORT.BIT.MODE |= 4;  // Change from CAN input to ECU external output 
+        if(SELECT_ECU_UNIT != ECU_UNIT_CGW)
+        {
+	        if (id == VI_POWERTRAIN_SWID) { // Receive drive simulator conflict ID 
+	            if (SELECT_ECU_UNIT == ECU_UNIT_POWERTRAIN) { // Only power trains are processed 
+                    ds_x_lost_counter = 100;  // Initialize continuation counter 
+					if(ecu_opmode.mode == ECU_OPMODE_0)
+                    {
+	                   	ds_conect_active[1] = ECU_OPMODE_5; // Vi mode
                     }
-                    ds_x_lost_counter = 0;  // Initialize continuation counter 
-                    // Invert MSB of first byte of received data to signal contention 
-                    data.BYTE[0] |= 0x80;
-                }
-            }
-        }
-        if (
-            data.LONG[0] == can_buf.ID[id].LONG[0] &&
-            data.LONG[1] == can_buf.ID[id].LONG[1] && id < 0x700
-        ) { // No data change 
+	            }
+	        }
+	        else
+	        // CARLA Mode Select frame
+	        if((id >= 0x7D0 && id <= 0x7DE) && ((data.BYTE[0] & 0xFF) == (~data.BYTE[1] & 0xFF)))
+	        {
+	        	//	CAN setup command
+	        	if(id >= 0x7D8)
+	        	{
+	        		return 0;
+	        	}
+	        	u = id & 7;
+	        	a = (int)data.BYTE[0];
+	        	switch(SELECT_ECU_UNIT)
+	        	{
+	        	default: k = 0; break;
+	        	case ECU_UNIT_CHASSIS: k = 1; break;
+	        	case ECU_UNIT_BODY: k = 2; break;
+	        	case ECU_UNIT_POWERTRAIN: k = 3; break;
+	        	case ECU_UNIT_PTBD: k = 4; break;
+	        	}
+	        	if(k > 0)
+	        	{
+	        		switch(a)
+	        		{
+	        		case 0:	//	All ECU
+	        			if(data.BYTE[2] > 1)
+	        			{
+	        				data.BYTE[2] = ds_conect_active[0];
+	        			}
+	        			else
+	        			{	//	mode 0..1
+				        	ds_conect_active[1] = data.BYTE[2];	//	Mode Chainge
+			        	}
+			        	if(u != 0)
+			        	{ //	broadcast from 7D1..7
+				        	if((u == k) || (k == 4 && (u == 3 || u == 2)))
+				        	{ //	ID match ECU
+						        if(k == 4)
+						        { //	PB = PT(3) & BD(2)
+						        	ret2nd = 0x7D9;
+						        	k = 3;
+						        }
+			        			id = 0x7D7 + k;	//	7D0 => 7D8..7DE
+		        			}
+		        			else return 0;	//	ID not match ECU
+		        		}
+			        	else
+			        	{ // broadcast to all ECU from 7D0
+					        if(k == 4)
+					        { //	PB = PT(3) & BD(2)
+					        	ret2nd = 0x7D9;
+					        	k = 3;
+					        }
+		        			id = 0x7D7 + k;	//	7D0 => 7D8..7DE
+		        		}
+			        	data.BYTE[0] = k;
+			        	data.BYTE[1] = ~k;
+			        	txmsk = 0;
+			        	goto RETURN_AND_NEXTSEND;
+	        		case 1:	//	single ECU chassis
+	        		case 2:	//	single ECU body
+	        		case 3:	//	single ECU powertrain
+			        	if(u != a && u != 0)
+			        	{ // not match
+		        			return 0;
+		        		}
+	        			if(data.BYTE[2] > 1)
+	        			{ // Mode error
+	        				data.BYTE[2] = ds_conect_active[0];
+	        			}
+	        			else
+	        			{ // Mode 0..1
+				        	ds_conect_active[1] = data.BYTE[2];	//	Mode Chainge
+	        			}
+			        	if(u != 0)
+			        	{ //	from 7D1..7 to selected ECU
+				        	if((u == k) || (k == 4 && (u == 3 || u == 2)))
+				        	{ //	ID match ECU
+			        			id = 0x7D7 + a;	//	7D1..7 => 7D8..7DE
+					        	txmsk = 0;
+					        	goto RETURN_AND_NEXTSEND;
+		        			}
+		        			else return 0;
+		        		}
+			        	else
+			        	{ // from 7D0 to selected ECU
+		        			//	ECU-ID check
+		        			if(k == a)
+		        			{ //	match
+			        			id = 0x7D7 + a;	//	7D1..7 => 7D8..E
+					        	txmsk = 0;
+					        	goto RETURN_AND_NEXTSEND;
+		        			}
+		        			else
+		        			if(k == 4 && (a == 2 || a == 3))
+		        			{ // powertrain and body
+			        			id = 0x7D7 + a;	//	7D1..7 => 7D8..E
+					        	txmsk = 0;
+					        	goto RETURN_AND_NEXTSEND;
+		        			}
+		        		}
+	        			return 0;	//	ID bat setup
+	        		case 4:	//	single ECU power&body
+			        	if(u != a && u != 0)
+			        	{ // ID not match ECU
+		        			return 0;
+		        		}
+	        			if(data.BYTE[2] > 1)
+	        			{ // Mode error
+	        				data.BYTE[2] = ds_conect_active[0];
+	        			}
+	        			else
+	        			{ // Mode 0..1
+				        	ds_conect_active[1] = data.BYTE[2];	//	Mode Chainge
+	        			}
+	        			if(k == a)
+	        			{ // match
+	        				id = 0x7D7 + a;	//	7D8..E resp.
+				        	txmsk = 0;
+				        	goto RETURN_AND_NEXTSEND;
+	        			}
+	        			return 0;	//	ID bat setup
+	        		default:
+	        			return 0;	//	ID bat setup
+	        		}
+	        	}
+	        }
+	        // CARLA DS switch
+			if(ds_conect_active[0] != ds_conect_active[1])
+			{ // DS Switching
+				ds_conect_active[0] = ds_conect_active[1];
+				ecu_opmode.mode = ds_conect_active[1];
+	        //	if(ecu_opmode.mode_bk != ecu_opmode.mode)
+	        	{	//	mode chainge
+	        		ecu_opmode.mode_bk = ecu_opmode.mode;
+					memset(exio_bridge, 0, sizeof(exio_bridge));
+					sprintf(s, "MOD%d\r", ecu_opmode.mode);
+					sci_puts(0, s);
+					switch(ecu_opmode.mode)
+					{
+					//----------------------------------------
+					case ECU_OPMODE_0:	//	PASTA
+						switch(SELECT_ECU_UNIT)
+						{
+						case ECU_UNIT_POWERTRAIN:
+							for(j = 0; CARLA_POWERTRAIN_SEND_ID[j] != 0 && j < 27; j++)
+							{
+								i = can_to_exio[CARLA_POWERTRAIN_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE &= 3;	//	CAN output -> ECU input
+								} else break;
+							}
+							break;
+						case ECU_UNIT_CHASSIS:
+							for(j = 0; CARLA_CHASSIS_SEND_ID[j] != 0 && j < 15; j++)
+							{
+								i = can_to_exio[CARLA_CHASSIS_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE &= 3;	//	CAN output -> ECU input
+								}
+								else break;
+							}
+							break;
+						case ECU_UNIT_BODY:
+							for(j = 0; CARLA_BODY_SEND_ID[j] != 0 && j < 22; j++)
+							{
+								i = can_to_exio[CARLA_BODY_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE &= 3;	//	CAN output -> ECU input
+								}
+							}
+							break;
+						case ECU_UNIT_PTBD:
+							for(j = 0; CARLA_PTBD_SEND_ID[j] != 0 && j < 49; j++)
+							{
+								i = can_to_exio[CARLA_PTBD_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE &= 3;	//	CAN output -> ECU input
+								}
+							}
+							break;
+						}
+						break;
+					//----------------------------------------
+					case ECU_OPMODE_1:	//	PASTA.Chassis.COM0 -> CAN -> CARLA -> CAN -> PASTA.Powertrain.COM0
+						switch(SELECT_ECU_UNIT)
+						{
+						case ECU_UNIT_POWERTRAIN:
+							for(j = 0; CARLA_POWERTRAIN_SEND_ID[j] != 0 && j < 27; j++)
+							{
+								i = can_to_exio[CARLA_POWERTRAIN_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE |= 4;	//	ECU input -> CAN output
+								}
+								else break;
+							}
+							break;
+						case ECU_UNIT_CHASSIS:
+							for(j = 0; CARLA_CHASSIS_SEND_ID[j] != 0 && j < 15; j++)
+							{
+								i = can_to_exio[CARLA_CHASSIS_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE &= 3;	//	CAN output -> ECU input
+								}
+							}
+							break;
+						case ECU_UNIT_BODY:
+							for(j = 0; CARLA_BODY_SEND_ID[j] != 0 && j < 22; j++)
+							{
+								i = can_to_exio[CARLA_BODY_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE |= 4;	//	ECU input -> CAN output
+								}
+								else break;
+							}
+							break;
+						case ECU_UNIT_PTBD:
+							for(j = 0; CARLA_PTBD_SEND_ID[j] != 0 && j < 49; j++)
+							{
+								i = can_to_exio[CARLA_PTBD_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE |= 4;	//	ECU input -> CAN output
+								}
+								else break;
+							}
+							break;
+						}
+						break;
+
+					//----------------------------------------
+					case ECU_OPMODE_5:	//	PASTA.Chassis.COM0 -> ECU.CS -> CAN -> CARLA.Phase1 -> CAN -> EUC.CS -> PASTA.Chassis.COM0
+						switch(SELECT_ECU_UNIT)
+						{
+						case ECU_UNIT_POWERTRAIN:
+							can_buf.ID[VI_POWERTRAIN_SWID].BYTE[0] |= 0x80;
+							for(j = 0; VI_POWERTRAIN_SEND_ID[j] != 0 && j < 27; j++)
+							{
+								i = can_to_exio[VI_POWERTRAIN_SEND_ID[j]];
+								if(i < EX_IO_MAX)
+								{
+									ext_list[i].PORT.BIT.MODE |= 4;	//	ECU input -> CAN output
+								}
+								else break;
+							}
+							break;
+						}
+						break;
+					}
+				}
+	            return 0;
+			}
+			if(SELECT_ECU_UNIT == ECU_UNIT_POWERTRAIN && ds_conect_active[0] >= ECU_OPMODE_5 && id == VI_POWERTRAIN_SWID)
+			{
+				data.BYTE[0] |= 0x80;	//	Vi mode flag set.
+			}
+		}
+		if(data.LONG[0] == can_buf.ID[id].LONG[0] && data.LONG[1] == can_buf.ID[id].LONG[1] && id < 0x700)
+		{ // No data change 
             return 0;
         }
+
+RETURN_AND_NEXTSEND:
+
         can_buf.ID[id].LONG[0] = data.LONG[0];
         can_buf.ID[id].LONG[1] = data.LONG[1];
         ret                    = 1;
         /* ---------------------------------
          * Transport layer processing
          * ---------------------------------*/
-        if (id >= 0x7DF && id <= 0x7EF) {
+        if (id >= 0x7DF && id <= 0x7EF)
+        {
             //CAN-TP only ID 
-            if (can_tp_job(ch, id, data.BYTE) > 0 && id != 0x7DF) {
+            if (can_tp_job(ch, id, data.BYTE) > 0 && id != 0x7DF)
+            {
                 return 0; // Single TP (UDS,OBD2) processing 
             }
         }
         /* ---------------------------------
          * Other port forwarding processing
          * ---------------------------------*/
-        if ((cgw & rxmsk) != 0) { // Transfer processing target 
+        if ((cgw & rxmsk) != 0)
+        { // Transfer processing target 
             txmsk = cgw & ~txmsk;
-            if ((txmsk & 0x01) != 0) { // CAN0 transfer enable 
+            if ((txmsk & 0x01) != 0)
+            { // CAN0 transfer enable 
                 add_mbox_frame(0, dlc, CAN_DATA_FRAME, id);
             }
-            if ((txmsk & 0x02) != 0) { // CAN1 transfer enable 
+            if ((txmsk & 0x02) != 0)
+            { // CAN1 transfer enable 
                 add_mbox_frame(1, dlc, CAN_DATA_FRAME, id);
             }
-            if ((txmsk & 0x04) != 0) { // CAN2 transfer enable 
+            if ((txmsk & 0x04) != 0)
+            { // CAN2 transfer enable 
                 add_mbox_frame(2, dlc, CAN_DATA_FRAME, id);
             }
-            if ((txmsk & 0x08) != 0) { // CAN3 transfer enable 
+            if ((txmsk & 0x08) != 0)
+            { // CAN3 transfer enable 
                 add_mbox_frame(3, dlc, CAN_DATA_FRAME, id);
             }
         }
-    } else { // Remote frame 
-        if ((cgw & rxmsk) != 0) { // Processing object 
-            if (search_target_id(id) >= 0) { // As it is target ID, reply data frame 
+    }
+    else
+    { // Remote frame 
+        if ((cgw & rxmsk) != 0)
+        { // Processing object 
+            if (search_target_id(id) >= 0)
+            { // As it is target ID, reply data frame 
                 add_mbox_frame(ch, dlc, CAN_DATA_FRAME, id);
             }
             // Confirm transfer target 
             txmsk = cgw & ~txmsk;
-            if ((txmsk & 0x01) != 0) { // CAN0 transfer enable 
+            if ((txmsk & 0x01) != 0)
+            { // CAN0 transfer enable 
                 add_mbox_frame(0, dlc, CAN_REMOTE_FRAME, id);
             }
-            if ((txmsk & 0x02) != 0) { // CAN1 transfer enable 
+            if ((txmsk & 0x02) != 0)
+            { // CAN1 transfer enable 
                 add_mbox_frame(1, dlc, CAN_REMOTE_FRAME, id);
             }
-            if ((txmsk & 0x04) != 0) { // CAN2 transfer enable 
+            if ((txmsk & 0x04) != 0)
+            { // CAN2 transfer enable 
                 add_mbox_frame(2, dlc, CAN_REMOTE_FRAME, id);
             }
-            if ((txmsk & 0x08) != 0) { // CAN3 transfer enable 
+            if ((txmsk & 0x08) != 0)
+            { // CAN3 transfer enable 
                 add_mbox_frame(3, dlc, CAN_REMOTE_FRAME, id);
             }
         }
     }
     return ret;
 }
-
 /* ---------------------------------------------------------------------------------------
  * can_send_proc
  * 
@@ -716,7 +1008,7 @@ int can_recv_frame(int ch, CAN_MBOX *mbox)
  *---------------------------------------------------------------------------------------*/
 void can_send_proc(ECU_CYC_EVE *ev)
 {
-    int            id;  // Get ID 
+    int            id, exid;  // Get ID 
     int            dlc; // Number of data bytes 
     unsigned char  msk; // Channel mask 
     CAN_DATA_BYTE *act; // Active data 
@@ -728,24 +1020,22 @@ void can_send_proc(ECU_CYC_EVE *ev)
     msk = rout_map.ID[id].BYTE & ((repro_mode == 0) ? 0x0F : 0xF0);
 
     if (ev->ID.BIT.RTR == 0) { // Data frame 
-        if (id == DS_X_POWERTRAIN_ID) {
-            if (ds_xross_pt_index >= 0) {
-                if (ext_list[ds_xross_pt_index].PORT.BIT.MODE > 3) { // DS detected 
-                    if (ds_x_lost_counter < 1000) { // Wait 10 seconds without receiving 
-                        ds_x_lost_counter++;
-                        if (ds_x_lost_counter >= 1000) {
-                            ext_list[ds_xross_pt_index].PORT.BIT.MODE &= 3;
-                            // Data initialization 
-                            exiosts.DATA[ext_list[ds_xross_pt_index].PORT.BIT.NOM].LONG = 0;
-                            can_buf.ID[id].LONG[0] = 0;
-                            can_buf.ID[id].LONG[1] = 0;
-                        } else {
-                            return; // Cancel transmission during DS 
-                        }
-                    }
-                }
-            }
-        }
+		exid = can_to_exio[id];
+		if(exid < EX_IO_MAX)
+		{
+			if(ext_list[exid].PORT.BIT.MODE > 3)
+			{	//	CAN input mode is cancel.(DS Connected)
+		        if (id == VI_POWERTRAIN_SWID && ecu_opmode.mode == ECU_OPMODE_5) {
+                    if (ds_x_lost_counter > 0) { // Wait 1 seconds without receiving 
+                        ds_x_lost_counter--;
+                        if (ds_x_lost_counter == 0) {
+                        	ds_conect_active[1] = ECU_OPMODE_0; // close Vi mode
+		                }
+		            }
+		        }
+				return;
+			}
+		}
         if (id < 0x700) { /* 700-7FF and DS competitive ID do not carry random information
                            * Random data generation additional processing*/
             act          = &can_buf.ID[id];
@@ -1668,7 +1958,6 @@ int add_extern_io(int id, int mode, int neg, int size, int bpos, int dlc, int no
         can_to_exio[id] = i;       // Reverse map setting 
         act = &ext_list[i];        // Registration pointer 
         act->SID = id;             // Frame ID number 
-        __break__
         act->PORT.BIT.MODE = mode; // I/O processing mode 
         act->PORT.BIT.NEG  = neg;  // Data inversion specification 
         act->PORT.BIT.SIZE = size; // Access size 
@@ -1680,6 +1969,7 @@ int add_extern_io(int id, int mode, int neg, int size, int bpos, int dlc, int no
             memcpy(act->PAT, pat, 24);  // Pattern data 
         }
         cmk = &can_random_mask.ID[id];
+        
         // Mask processing 
         switch (mode) {
         default: // Mask invalid 
@@ -1703,16 +1993,7 @@ int add_extern_io(int id, int mode, int neg, int size, int bpos, int dlc, int no
             cmk->BYTE[bpos + 3] = 0xFF;
             break;
         }
-        // DS conflict ID list number 
-        if (id == DS_X_POWERTRAIN_ID) { // DS-only rules 
-            ds_xross_pt_index    = i;   // Retain 
-            rout_map.ID[id].BYTE = 0x11;
-        } else { // Routing map setting 
-            /* Define transmit / receive flags in input / output direction 
-             * (0..3:  input value -> CAN transmission 
-             *  4..7: output value <- CAN reception)  */
-            rout_map.ID[id].BYTE = (mode < 4) ? 0x01 : 0x10; 
-        }
+        rout_map.ID[id].BYTE = 0x11;
         return i;
     }
     return -1;
@@ -1860,11 +2141,6 @@ void ecu_init(void)
                 cmk->BYTE[act->PORT.BIT.BPOS + 2] = 0xFF;
                 cmk->BYTE[act->PORT.BIT.BPOS + 3] = 0xFF;
                 break;
-            }
-            // DS conflict ID list number 
-            if (act->SID == DS_X_POWERTRAIN_ID) { // DS-only rules 
-                ds_xross_pt_index = i;  // Retain 
-                rout_map.ID[act->SID].BYTE = 0x11;
             }
         }
     } else if (i == FLASH_BLANK) { /* No saved information
@@ -2236,9 +2512,9 @@ void ecu_job(void)
      * The following is iterative process
      *------------------------------------------*/
     case 2: // I/O update 
-        job++;
+    //    job++;
         extern_io_update_ex(); // I/O via RS-232C communication 
-        break;
+    //    break;
     case 3: // 1ms cycle processing 
         job = 5;
         if (timer_count > 0) { // With timer update 
@@ -2314,6 +2590,23 @@ void ecu_job(void)
                         buf[r++]    = HEX_CHAR[(k & 15)];
                         // Update data 4 bytes 
                         k   = exiosts.DATA[stat_update_id].INTE;
+
+		            	if(SELECT_ECU_UNIT == ECU_UNIT_CHASSIS)
+		            	{
+			            	if(ds_conect_active[0] >= ECU_OPMODE_5)
+			            	{	//	Chassis only DS(VI) mode
+			            		if(stat_update_id == VI_POWERTRAIN_SPEED)
+			            		{	//	copy speed value
+			            			k = exiosts.DATA[VI_POWERTRAIN_RPM].INTE & 0xFFFF;
+			            		}
+			            		else
+			            		if(stat_update_id == VI_POWERTRAIN_RPM)
+			            		{	//	update request
+			            			exio_chg[VI_POWERTRAIN_SPEED]++;
+			            		}
+			            	}
+			            }
+
                         j   = 8;
                         if (((k >> 28) & 15) == 0) {
                             j--;
@@ -2779,6 +3072,37 @@ void ecu_put_command(char *cmd)
 }
 
 /* ---------------------------------------------------------------------------------------
+ * ecu_put_message
+ * 
+ * Outline
+ *     ECU frame data transmission
+ *
+ * Argument
+ *     int  id   CAN SID
+ *     int  size Data bytes
+ *     char *buf Data pointer
+ *
+ * Description
+ *     Rewrite frame data of specified ID
+ *
+ * Return
+ *     None
+ *---------------------------------------------------------------------------------------*/
+void ecu_put_message(int id, int size, unsigned char *buf)
+{
+    ECU_CYC_EVE mbox;
+    if (id >= 0 && id < CAN_ID_MAX) { // ID normal, data processing 
+        memcpy(can_buf.ID[id].BYTE, buf, size);
+        mbox.ID.LONG    = 0;
+        mbox.TIMER.LONG = 0;
+        mbox.ID.BIT.SID = id;
+        mbox.ID.BIT.ENB = 1;
+        mbox.ID.BIT.DLC = size;
+        can_send_proc(&mbox);
+    }
+}
+
+/* ---------------------------------------------------------------------------------------
  * ecu_input_update
  * 
  * Outline
@@ -2843,7 +3167,7 @@ void ecu_input_update(char *cmd)
                 f++;
             }
             if (f > 0) { // With data rewriting 
-                exiosts.DATA[id].LONG = d;
+            	exiosts.DATA[id].LONG = d;
             }
         } else {
             break;
